@@ -4,6 +4,7 @@ import * as z from "zod";
 export const Env = createEnv({
   server: {
     SERVER_API_KEY: z.string().min(1),
+    FLAGSMITH_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),

@@ -1,17 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Home from "../src/app/page";
+import Home from "@/app/page";
 
-jest.mock("@/lib/env", () => ({
-  Env: {
-    SERVER_API_KEY: "test-server-key",
-    NEXT_PUBLIC_PUBLISHABLE_KEY: "test-publishable-key",
+jest.mock("@/lib/flagsmith", () => ({
+  __esModule: true,
+  default: {
+    getEnvironmentFlags: jest.fn().mockResolvedValue({
+      isFeatureEnabled: jest.fn().mockReturnValue(false),
+    }),
   },
 }));
 
 describe("Home Page", () => {
-  beforeEach(() => {
-    render(<Home />);
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    render(await Home());
   });
 
   test("1. renders the Next.js logo with correct alt text", () => {

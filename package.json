@@ -30,6 +30,8 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "npm run lint:fix",
+      "npm run lint",
+      "npm run format:fix",
       "npm run format:check"
     ]
   },
@@ -50,6 +52,7 @@
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.11",
+    "flagsmith-nodejs": "^8.0.2",
     "next": "16.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",

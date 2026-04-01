@@ -1,16 +1,16 @@
-import { Env } from "@/lib/env";
+import FeatureTest from "@/components/FeatureTest";
+import Loader from "@/components/ui/Loader";
 import Image from "next/image";
+import { Suspense } from "react";
 
 export default function Home() {
-  console.log("Server-side SERVER_API_KEY:", Env.SERVER_API_KEY);
-  console.log(
-    "Client-side NEXT_PUBLIC_PUBLISHABLE_KEY:",
-    Env.NEXT_PUBLIC_PUBLISHABLE_KEY,
-  );
-
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
+        <Suspense fallback={<Loader />}>
+          <FeatureTest />
+        </Suspense>
+
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -20,6 +20,7 @@ export default function Home() {
           style={{ width: "100px", height: "20px" }}
           priority
         />
+
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
             To get started, edit the page.tsx file.
