@@ -7,7 +7,9 @@ const config = {
       enableMultipleScopes: true,
     },
   },
-  rules: { "subject-case": [2, "always", ["lower-case"]] },
+  rules: {
+    "subject-case": [0],
+  },
 } satisfies UserConfig;
 
 export default config;
