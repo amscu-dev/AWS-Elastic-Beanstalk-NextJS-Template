@@ -87,7 +87,7 @@ jobs:
         run: npm ci
 
       - name: Build App
-        run: npm run
+        run: npm  run build
         env:
           FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
 
@@ -135,7 +135,7 @@ jobs:
           --region ${{ vars.AWS_REGION }}
 
       - name: Deploy if Environment Exists
-        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME ==  inputs.aws-env || steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated'
+        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME ==  inputs.aws-env && steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated'
         run: eb deploy ${{ inputs.aws-env }}
 
       - name: Get AWS ENV CNAME
