@@ -1,0 +1,171 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  workflow_dispatch:
+    inputs:
+      aws-env:
+        description: "AWS Elastic Beanstalk Environment Name"
+        required: true
+        default: "app-staging"
+        type: choice
+        options:
+          - app-staging
+          - app-production
+      github-env:
+        description: "GitHub Deployment Environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+  workflow_call:
+    inputs:
+      aws-env:
+        description: "AWS Elastic Beanstalk Environment Name"
+        required: true
+        default: "app-staging"
+        type: string
+      github-env:
+        description: "GitHub Deployment Environment"
+        required: true
+        default: "staging"
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.aws-env }}-${{inputs.github-env}}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: ${{ inputs.github-env }}
+      url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
+    steps:
+      - name: Validate Inputs
+        run: |
+          if [[ "${{ inputs.github-env }}" != "staging" && "${{ inputs.github-env }}" != "production" ]]; then
+            echo "::error::Invalid github-env value: ${{ inputs.github-env }}"
+            exit 1
+          fi
+          if [[ "${{ inputs.aws-env }}" != "${{ vars.AWS_EB_PRODUCTION_ENV }}" && "${{ inputs.aws-env }}" != "${{ vars.AWS_EB_STAGING_ENV }}" ]]; then
+            echo "::error::Invalid aws-env value: ${{ inputs.aws-env }}"
+            exit 1
+          fi
+
+      - name: Avoid deploying to production using a non production env
+        if: inputs.aws-env == vars.AWS_EB_PRODUCTION_ENV && inputs.github-env != 'production'
+        run: |
+          echo "::error::Cannot deploy to production using a non production environment"
+          exit 1
+
+      - name: Avoid deploying to staging using a non staging env
+        if: inputs.aws-env == vars.AWS_EB_STAGING_ENV && inputs.github-env != 'staging'
+        run: |
+          echo "::error::Cannot deploy to staging using a non staging environment"
+          exit
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Checkout Reposiotry Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build App
+        run: npm run
+        env:
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: ${{runner.os}}-pip
+
+      - name: Install Elastic Beanstalk
+        id: install-eb-cli
+        run: pip install awsebcli
+
+      - name: Get AWS ENV Name
+        id: get-aws-env-name
+        run: |
+          echo "AWS_ENV_NAME=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names ${{ inputs.aws-env }} \
+            --query "Environments[0].EnvironmentName" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Get AWS ENV Status
+        id: get-aws-env-status
+        run: |
+          echo "AWS_ENV_STATUS=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names ${{ inputs.aws-env }} \
+            --query "Environments[0].Status" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Initialize EB
+        run: |
+          eb init ${{vars.AWS_EB_APP_NAME}} \
+          --platform ${{ vars.AWS_EB_PLATFORM }} \
+          --region ${{ vars.AWS_REGION }}
+
+      - name: Create a New Environment
+        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME == 'None' || steps.get-aws-env-status.outputs.AWS_ENV_STATUS == 'Terminated'
+        run: |
+          eb create ${{ inputs.aws-env }} \
+          --instance-type ${{ vars.AWS_EB_ENV_INSTANCE_TYPE }} \
+          --single \
+          --cname ${{ inputs.aws-env }} \
+          --envvars FLAGSMITH_KEY=${{ secrets.FLAGSMITH_KEY }} \
+          --region ${{ vars.AWS_REGION }}
+
+      - name: Deploy if Environment Exists
+        if: steps.get-aws-env-name.outputs.AWS_ENV_NAME ==  inputs.aws-env || steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated'
+        run: eb deploy ${{ inputs.aws-env }}
+
+      - name: Get AWS ENV CNAME
+        id: get-aws-env-cname
+        run: |
+          echo "AWS_ENV_CNAME=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{ vars.AWS_EB_APP_NAME }} \
+            --environment-names ${{ inputs.aws-env }} \
+            --query "Environments[0].Status" \
+            --output text)" >> $GITHUB_OUTPUT
+
+      - name: Notify on Slack
+        uses: slackapi/slack-github-action@v3.0.1
+        continue-on-error: true
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🚀 Deployment to AWS environment *${{ inputs.aws-env }}* using *${{ inputs.github-env }}* GitHub wnvironment  was successfull. <http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}|View Deployment>"
+                  }
+                }
+              ]
+            }
+
+      - name: Abort if Cancelled
+        if: cancelled() && steps.install-eb-cli.conclusion == 'success'
+        run: eb abort ${{ inputs.aws-env }}
