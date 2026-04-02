@@ -1,0 +1,67 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 1%
+
+    patch:
+      app:
+        target: 80%
+        threshold: 1%
+        flags:
+          - app
+
+      components:
+        target: 80%
+        threshold: 1%
+        flags:
+          - components
+
+github_checks:
+  annotations: true
+
+comment:
+  layout: "newheader, diff, flags, files"
+  require_changes: false
+  require_base: false
+  require_head: true
+  show_carryforward_flags: true
+  show_critical_paths: true
+  hide_comment_details: true
+
+profiling:
+  critical_files_paths:
+    - src/app/*
+    - src/components/*
+
+flags:
+  app:
+    carryforward: true
+    paths:
+      - src/app
+
+  components:
+    carryforward: true
+    paths:
+      - src/components
+
+ignore:
+  - "node_modules/**"
+  - ".next/**"
+  - "coverage/**"
+  - "public/**"
+  - "**/*.config.js"
+  - "**/*.config.cjs"
+  - "**/*.config.mjs"
+  - "**/*.config.ts"
+  - "next-env.d.ts"
+  - "**/*.d.ts"
+  - "**/__tests__/**"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "jest.setup.*"
+  - "playwright-report/**"
+  - "test-results/**"
+  - "e2e/**"
+  - "tests/e2e/**"

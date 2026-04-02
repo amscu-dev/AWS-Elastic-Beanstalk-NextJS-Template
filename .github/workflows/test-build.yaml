@@ -48,6 +48,9 @@ jobs:
         with:
           name: build
           path: .next/
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
       - name: Store Playwright`s Version
         run: |
           PLAYWRIGHT_VERSION=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//' | head -1)
