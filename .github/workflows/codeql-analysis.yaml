@@ -5,7 +5,7 @@ on:
     branches: [main]
   schedule:
     - cron: "30 10 * * 1"
-
+run-name: "CodeQL Analysis - ${{ github.event_name }} by @${{ github.actor }}"
 permissions:
   actions: read
   checks: write
@@ -32,7 +32,7 @@ jobs:
         id: initialize
         uses: github/codeql-action/init@v4
         with:
-          config-file: .github/codeql/codeql-config.yml
+          config-file: .github/codeql/codeql-config.yaml
           languages: ${{ matrix.language }}
           source-root: src
 
