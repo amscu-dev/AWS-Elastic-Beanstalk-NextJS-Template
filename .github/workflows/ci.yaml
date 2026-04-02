@@ -1,0 +1,14 @@
+name: CI
+run-name: CI Pipeline - PR#${{ github.event.pull_request.number }} by @${{ github.actor }}
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/test-build.yaml
+    secrets: inherit
