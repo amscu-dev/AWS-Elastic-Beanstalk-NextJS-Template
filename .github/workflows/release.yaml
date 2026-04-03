@@ -1,4 +1,6 @@
-name: CD
+name: Version Management
+
+run-name: "Version Management | ${{ github.actor }} → ${{ github.ref_name }}"
 on:
   push:
     branches: [main]

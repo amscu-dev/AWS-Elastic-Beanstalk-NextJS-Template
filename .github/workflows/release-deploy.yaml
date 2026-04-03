@@ -1,5 +1,7 @@
 name: Release Deploy
 
+run-name: "Release Deploy v${{ github.ref_name }}"
+
 on:
   release:
     types: [published]
