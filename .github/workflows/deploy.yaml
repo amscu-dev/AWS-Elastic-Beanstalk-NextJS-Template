@@ -32,6 +32,10 @@ on:
         required: true
         default: "staging"
         type: string
+    outputs:
+      aws-url:
+        description: "AWS Elastic Beanstalk deployment url"
+        value: ${{ jobs.deploy.outputs.aws-url }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.aws-env }}-${{inputs.github-env}}
@@ -39,7 +43,9 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.
+    outputs:
+      aws-url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
     environment:
       name: ${{ inputs.github-env }}
       url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
