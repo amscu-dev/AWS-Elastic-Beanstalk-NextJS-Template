@@ -1,0 +1,101 @@
+name: CD
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  create-version-pr-or-release:
+    runs-on: ubuntu-24.04
+    outputs:
+      should-deploy: ${{steps.changesets.outputs.hasChangesets == 'false' }}
+      # hasChangesets == 'false' => facem deploy oricand un pr fara changesets este push in main
+      # published == 'true' => facem deploy doar cand un release este creat
+      # asta ar trebui as fie un workflow denumit release sau app versioing si sa fac workflowul de CD doar la release? sau este okei asta asa?
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Create Version PR or Github Release
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: npx changeset tag
+        env:
+          # GITHUB_TOKEN will not trigger ci.yaml workflow(github prevention for infinite loop) CHANGESET_TOKEN its a PAT, and it will trigger ci workflow.
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_TOKEN }}
+
+      - run: echo '${{ toJson(steps.changesets.outputs) }}'
+
+      - name: Send a Slack Message for Version PR Updates
+        if: steps.changesets.outputs.pullRequestNumber
+        uses: slackapi/slack-github-action@v3.0.1
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "✅ *<https://github.com/${{github.repository}}/pull/${{ steps.changesets.outputs.pullRequestNumber }}|Version Pull Request>* was updated. Review it and merge it to create a new release and deployment."
+                  }
+                }
+              ]
+            }
+
+      - name: Get & Set Release Version
+        if: steps.changesets.outputs.published == 'true'
+        id: get-version
+        run: echo "app_version=${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}" >> $GITHUB_OUTPUT
+
+      - name: Send a Slack Message for Version PR Updates
+        if: steps.changesets.outputs.pullRequestNumber
+        uses: slackapi/slack-github-action@v3.0.1
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "⏳ *<https://github.com/${{github.repository}}/releases/tag/v${{ steps.get-version.outputs.version }}|Version ${{ steps.get-version.outputs.version }}>* Released! Deployment should be in progress."
+                  }
+                }
+              ]
+            }
+  run-tests:
+    needs: create-version-pr-or-release
+    if: needs.create-version-pr-or-release.outputs.should-deploy == 'true'
+    uses: ./.github/workflows/test-build.yaml
+    secrets: inherit
+  deploy-to-staging:
+    needs: run-tests
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      aws-env: ${{vars.AWS_EB_STAGING_ENV}}
+      github-env: "staging"
+  deploy-to-production:
+    needs: run-tests
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      aws-env: ${{vars.AWS_EB_PRODUCTION_ENV}}
+      github-env: "production"
