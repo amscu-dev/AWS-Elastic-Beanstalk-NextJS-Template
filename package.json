@@ -25,7 +25,8 @@
     "commit": "cz",
     "knip": "knip --max-show-issues 5 --config knip.json --cache",
     "knip:prod": "knip --max-show-issues 5 --config knip.json --cache --production",
-    "knip:clean": "knip --fix --allow-remove-files"
+    "knip:clean": "knip --fix --allow-remove-files",
+    "version": "npx changeset"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
