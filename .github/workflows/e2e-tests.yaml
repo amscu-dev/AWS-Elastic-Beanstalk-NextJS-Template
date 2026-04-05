@@ -49,6 +49,10 @@ jobs:
         if: steps.cache-playwright-browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
+      - name: Fix Webkit OS Dependecies Bug
+        if: steps.cache-playwright-browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps webkit
+
       - name: Run E2E Tests
         run: npm run test:e2e
         env:
