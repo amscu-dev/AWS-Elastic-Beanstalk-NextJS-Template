@@ -24,7 +24,7 @@ jobs:
                 pull_number: context.issue.number
             });
             console.log(response.data)
-            return response.data.head.
+            return response.data.head.ref
       - name: Trigger a Branch Deploy
         uses: actions/github-script@v8
         with:

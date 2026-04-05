@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      deployments: write
     environment:
       name: ${{ inputs.github-env }}
       url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
