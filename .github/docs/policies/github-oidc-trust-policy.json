@@ -16,7 +16,8 @@
             "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:environment:staging:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/deploy.yaml@*",
             "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:environment:production:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/deploy.yaml@*",
             "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:environment:staging:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/deploy-ephemeral-env-aws.yaml@*",
-            "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:ref:refs/heads/main:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/terminate-pr-aws-env.yaml@refs/heads/main"
+            "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:ref:refs/heads/main:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/terminate-pr-aws-env.yaml@refs/heads/main",
+            "repo:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD:pull_request:job_workflow_ref:amscu-dev/AWS-Elastic-Beanstalk-NextJS-CI-CD/.github/workflows/terminate-pr-aws-env.yaml@refs/heads/main"
           ]
         }
       }

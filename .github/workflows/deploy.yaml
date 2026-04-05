@@ -50,6 +50,8 @@ jobs:
     environment:
       name: ${{ inputs.github-env }}
       url: "http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}"
+    permissions:
+      id-token: write
     steps:
       - name: Validate Inputs
         run: |
