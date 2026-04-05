@@ -202,30 +202,6 @@ jobs:
               body: comment
             })
 
-      - name: Create GitHub Deployment and Report URL
-        uses: actions/github-script@v8
-        if: success()
-        with:
-          script: |
-            const deployment = await github.rest.repos.createDeployment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: '${{ github.ref_name }}',
-              environment: '${{ inputs.github-env }}',
-              auto_merge: false,
-              required_contexts: [],
-              transient_environment: true
-            });
-
-            await github.rest.repos.createDeploymentStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              deployment_id: deployment.data.id,
-              state: 'success',
-              environment_url: 'http://${{ steps.get-aws-env-cname.outputs.AWS_ENV_CNAME }}',
-              log_url: `https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`
-            });
-
       - name: Abort if Cancelled
         if: cancelled() && steps.install-eb-cli.conclusion == 'success'
         run: eb abort app-PR-${{ inputs.report-pr }}
