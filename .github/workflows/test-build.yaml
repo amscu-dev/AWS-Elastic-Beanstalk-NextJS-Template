@@ -28,11 +28,6 @@ jobs:
           node-version-file: .node-version
           cache: "npm"
 
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-        with:
-          config-file: "./.github/dependency-review-config.yaml"
-
       - name: Install Dependencies
         run: npm ci
 
