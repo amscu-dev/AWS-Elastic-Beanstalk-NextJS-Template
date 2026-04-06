@@ -32,7 +32,8 @@
     "check:merge-conflicts": "bash ./scripts/check-merge-conflicts.sh",
     "gitleaks": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest detect --verbose",
     "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose",
-    "cspell": "cspell --no-must-find-files --gitignore --unique ."
+    "cspell": "cspell --no-must-find-files --gitignore --unique .",
+    "actionlint": "docker run --rm -v \"%CD%:/source\" --workdir /source rhysd/actionlint:latest -color -config-file .github/linters/actionlint.yaml"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

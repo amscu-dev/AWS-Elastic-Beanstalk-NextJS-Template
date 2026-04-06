@@ -64,7 +64,7 @@ jobs:
       - name: Get & Set Release Version
         if: steps.changesets.outputs.published == 'true'
         id: get-version
-        run: echo "app_version=${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}" >> $GITHUB_OUTPUT
+        run: echo "app_version=${{ fromJson(steps.changesets.outputs.publishedPackages)[0].version }}" >> "$GITHUB_OUTPUT"
 
       - name: Send a Slack Message when a New Release is Created
         if: steps.changesets.outputs.published == 'true'

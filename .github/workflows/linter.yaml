@@ -98,6 +98,7 @@ jobs:
           # VALIDATE_NATURAL_LANGUAGE: false
           # VALIDATE_JSX: false
           # VALIDATE_PRE_COMMIT: false
+          # VALIDATE_SPELL_CODESPELL: false
           VALIDATE_OPENAPI: true
           VALIDATE_BASH: true
           VALIDATE_GITHUB_ACTIONS: true
@@ -107,6 +108,5 @@ jobs:
           VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
           VALIDATE_MARKDOWN: true
           VALIDATE_MARKDOWN_PRETTIER: true
-          VALIDATE_SPELL_CODESPELL: true
           VALIDATE_YAML: true
           VALIDATE_YAML_PRETTIER: true

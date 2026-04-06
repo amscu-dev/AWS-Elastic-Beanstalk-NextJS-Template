@@ -39,7 +39,7 @@ jobs:
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names app-pr-${{ github.event.issue.number || github.event.pull_request.number }} \
             --query "Environments[0].EnvironmentName" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Get AWS ENV Status
         id: get-aws-env-status
@@ -48,7 +48,7 @@ jobs:
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names app-pr-${{ github.event.issue.number || github.event.pull_request.number }} \
             --query "Environments[0].Status" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Initialize EB
         run: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Decide if Environment Needs to be Terminated
         id: check-env
-        run: echo "should_terminate=${{  steps.get-aws-env-name.outputs.AWS_ENV_NAME != 'None' && steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated' }}" >> $GITHUB_OUTPUT
+        run: echo "should_terminate=${{  steps.get-aws-env-name.outputs.AWS_ENV_NAME != 'None' && steps.get-aws-env-status.outputs.AWS_ENV_STATUS != 'Terminated' }}" >> "$GITHUB_OUTPUT"
 
       - name: Destroy Environment
         if: steps.check-env.outputs.should_terminate == 'true'
@@ -82,13 +82,15 @@ jobs:
         if: steps.check-env.outputs.should_terminate == 'true'
         uses: actions/github-script@v8
         id: get-latest-deployment
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref || steps.get-head-ref.outputs.result }}
         with:
           result-encoding: string
           script: |
             const response = await github.rest.repos.listDeployments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: "${{ github.event.pull_request.head.ref || steps.get-head-ref.outputs.result  }}",
+              ref: process.env.HEAD_REF,
               per_page: 1
             });
             return response.data.length > 0 ? response.data[0].id : ""

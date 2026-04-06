@@ -7,3 +7,12 @@ npm run gitleaks:staged
 echo "============= LINTING STAGED FILES ============="
 npx lint-staged
 
+echo "============= LINTING GITHUB ACTIONS ============="
+STAGED_WORKFLOWS=$(git diff --cached --name-only | grep -E '^\.github/workflows/.*\.(yml|yaml)$')
+echo "Staged workflow files:"
+echo "${STAGED_WORKFLOWS:-(none)}"
+if [ -n "$STAGED_WORKFLOWS" ]; then
+  echo "$STAGED_WORKFLOWS" | xargs docker run --rm -v "$(pwd):/source" --workdir /source rhysd/actionlint:latest -color -config-file .github/linters/actionlint.yaml --verbose
+else
+  echo "No workflow files staged, skipping actionlint."
+fi

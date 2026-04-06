@@ -104,7 +104,7 @@ jobs:
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names ${{ inputs.aws-env }} \
             --query "Environments[0].EnvironmentName" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Get AWS ENV Status
         id: get-aws-env-status
@@ -113,7 +113,7 @@ jobs:
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names ${{ inputs.aws-env }} \
             --query "Environments[0].Status" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Initialize EB
         run: |
@@ -142,7 +142,7 @@ jobs:
             --application-name ${{ vars.AWS_EB_APP_NAME }} \
             --environment-names ${{ inputs.aws-env }} \
             --query "Environments[0].CNAME" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Notify on Slack
         uses: slackapi/slack-github-action@v3.0.1
