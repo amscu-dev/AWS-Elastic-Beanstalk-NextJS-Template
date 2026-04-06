@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:ci": "eslint . --max-warnings=0",
+    "lint:md": "markdownlint --ignore-path .markdownlintignore \"**/*.md\"",
+    "lint:md:fix": "markdownlint --fix --ignore-path .markdownlintignore \"**/*.md\"",
     "format:fix": "prettier --write .",
     "format:check": "prettier --check .",
     "test:e2e": "npx playwright test --workers=4",
@@ -32,9 +34,13 @@
     "gitleaks:staged": "docker run --rm -v \"%CD%:/source\" -w /source ghcr.io/gitleaks/gitleaks:latest protect --staged --verbose"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,yaml}": [
-      "npm run lint:fix",
-      "npm run format:fix"
+    "*.{js,jsx,ts,tsx,yaml,yml}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md}": [
+      "prettier --write",
+      "markdownlint --ignore-path .markdownlintignore --fix"
     ]
   },
   "config": {
@@ -44,9 +50,6 @@
   },
   "overrides": {
     "lodash": "4.18.1",
-    "markdownlint-cli2": {
-      "smol-toml": "1.6.1"
-    },
     "commitizen": {
       "inquirer": {
         "external-editor": {
@@ -88,7 +91,7 @@
     "jest-environment-jsdom": "^30.3.0",
     "knip": "^6.3.0",
     "lint-staged": "^16.4.0",
-    "markdownlint-cli2": "^0.22.0",
+    "markdownlint-cli": "^0.48.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
