@@ -65,11 +65,6 @@ jobs:
         run: |
           echo VALIDATE_ALL_CODEBASE=${{ !contains(github.event_name, 'pull_request') }}
 
-      - name: Load super-linter.env config
-        if: hashFiles('.github/super-linter.env') != ''
-        run: |
-          sed -E 's/^[[:space:]]+//; /^[[:space:]]*(#|$)/d' .github/super-linter.env >> "$GITHUB_ENV"
-
       - name: Lint Codebase
         id: super-linter
         uses: super-linter/super-linter/slim@61abc07d755095a68f4987d1c2c3d1d64408f1f9 #v8.5.0
@@ -90,3 +85,28 @@ jobs:
             (^storybook-static/.*)|
             (^tsconfig\.tsbuildinfo$)|
             (^package-lock\.json$)
+          VALIDATE_JSCPD: false
+          VALIDATE_DOCKERFILE: false
+          VALIDATE_SHELL_SHFMT: false
+          VALIDATE_EDITORCONFIG: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_JSX: false
+          VALIDATE_PRE_COMMIT: false
+          VALIDATE_OPENAPI: true
+          VALIDATE_BASH: true
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_JSON: true
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: true
+          VALIDATE_GITLEAKS: true
+          VALIDATE_GIT_MERGE_CONFLICT_MARKERS: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_SPELL_CODESPELL: true
+          VALIDATE_YAML: true
+          VALIDATE_YAML_PRETTIER: true
