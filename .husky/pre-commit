@@ -1,3 +1,6 @@
+echo "============= CHECKING MERGE CONFLICT MARKERS ============="
+npm run check:merge-conflicts
+
 echo "============= LINTING STAGED FILES ============="
 npx lint-staged
 
