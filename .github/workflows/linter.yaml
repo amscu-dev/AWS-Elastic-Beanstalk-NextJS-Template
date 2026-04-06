@@ -1,5 +1,6 @@
 name: Lint Codebase
 
+run-name: "Lint Codebase | ${{ github.event_name == 'pull_request' && format('PR #{0} by {1}', github.event.pull_request.number, github.actor) || format('{0} → {1}', github.actor, github.ref_name) }}"
 on:
   pull_request:
     branches:
