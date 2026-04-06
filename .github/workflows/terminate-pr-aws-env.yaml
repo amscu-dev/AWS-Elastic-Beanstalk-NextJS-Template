@@ -80,7 +80,7 @@ jobs:
 
       - name: Get deployment ID
         if: steps.check-env.outputs.should_terminate == 'true'
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         id: get-latest-deployment
         with:
           result-encoding: string
@@ -107,7 +107,7 @@ jobs:
             console.log(response)
 
       - name: Update Pull Request (Failure)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         if: failure() && steps.check-env.outputs.should_terminate == 'true'
         continue-on-error: true
         with:
@@ -124,7 +124,7 @@ jobs:
             })
 
       - name: Update Pull Request (Success)
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         if: success() && steps.check-env.outputs.should_terminate == 'true'
         continue-on-error: true
         with:
