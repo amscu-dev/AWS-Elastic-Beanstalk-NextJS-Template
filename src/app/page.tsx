@@ -1,5 +1,6 @@
 import AppVersion from "@/components/AppVersion";
 import FeatureTest from "@/components/FeatureTest";
+import PostContainer from "@/components/ReactQuerySSRHydratationBoundaryComponent";
 import Loader from "@/components/ui/Loader";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -13,7 +14,7 @@ export default function Home() {
         <Suspense fallback={<Loader />}>
           <FeatureTest />
         </Suspense>
-
+        <PostContainer />
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -23,7 +24,6 @@ export default function Home() {
           style={{ width: "100px", height: "20px" }}
           priority
         />
-
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
             To get started, edit the page.tsx file.
