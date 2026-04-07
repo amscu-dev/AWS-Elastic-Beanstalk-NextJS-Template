@@ -1,5 +1,11 @@
 # aws_elastic_beanstalk_nextjs_cicd
 
+## 0.0.4
+
+### Patch Changes
+
+- ae88dd3: test release workflow
+
 ## 0.0.3
 
 ### Patch Changes
