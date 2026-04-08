@@ -1,29 +1,9 @@
 "use client";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
-
-interface Todo {
-  userId: number;
-  id: number;
-  title: string;
-  completed: boolean;
-}
-
-async function getTodo(): Promise<Todo> {
-  const res = await fetch("https://jsonplaceholder.typicode.com/todos/1");
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch todo");
-  }
-
-  return res.json();
-}
+import { useGetPostById } from "../services/post.hooks";
 
 export default function Post() {
-  const { data } = useSuspenseQuery({
-    queryKey: ["posts"],
-    queryFn: getTodo,
-  });
+  const { data } = useGetPostById(1);
 
   return (
     <ul>

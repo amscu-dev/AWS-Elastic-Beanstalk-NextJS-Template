@@ -7,6 +7,7 @@ import {
   UseMutationOptions,
   useMutation,
   useQueryClient,
+  useSuspenseQuery,
 } from "@tanstack/react-query";
 import { postQueryKeys } from "./post.queryKeys";
 import { postsApi } from "./post.api";
@@ -33,7 +34,7 @@ export const useGetAllPosts = <TData = Post[]>(
   >,
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
-  return useQuery<ApiResponse<Post[]>, AppError, TData>({
+  return useSuspenseQuery<ApiResponse<Post[]>, AppError, TData>({
     queryKey: postQueryKeys.all(),
     queryFn: ({ signal }) =>
       postsApi.getAll({ signal, ...optionalAxiosConfig }),
@@ -50,7 +51,7 @@ export const useGetPostById = <TData = Post>(
   >,
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
-  return useQuery<ApiResponse<Post>, AppError, TData>({
+  return useSuspenseQuery<ApiResponse<Post>, AppError, TData>({
     queryKey: postQueryKeys.byId(id),
     queryFn: ({ signal }) =>
       postsApi.getById(id, { signal, ...optionalAxiosConfig }),
