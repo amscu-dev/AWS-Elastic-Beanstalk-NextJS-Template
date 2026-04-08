@@ -1,9 +1,9 @@
 import AppVersion from "@/components/AppVersion";
 import FeatureTest from "@/components/FeatureTest";
-import PostContainer from "@/components/ReactQuerySSRHydratationBoundaryComponent";
 import Loader from "@/components/ui/Loader";
 import Image from "next/image";
 import { Suspense } from "react";
+import PostSuspense from "@/features/featureA/components/PostSuspense";
 
 export const revalidate = 0;
 
@@ -14,7 +14,8 @@ export default function Home() {
         <Suspense fallback={<Loader />}>
           <FeatureTest />
         </Suspense>
-        <PostContainer />
+        <PostSuspense />
+
         <Image
           className="dark:invert"
           src="/next.svg"
