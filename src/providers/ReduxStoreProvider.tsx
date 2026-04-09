@@ -1,8 +1,13 @@
 "use client";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
+import { ReactNode } from "react";
 
-function StoreContextProvider({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: ReactNode;
+}
+
+function StoreContextProvider({ children }: Props) {
   return <Provider store={store}>{children}</Provider>;
 }
 

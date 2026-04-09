@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import ReactQueryProvider from "./ReactQueryProvider";
 import StoreContextProvider from "./ReduxStoreProvider";
+import NuqsProvider from "./NuqsProvider";
 
 interface Props {
   children: ReactNode;
@@ -10,7 +11,9 @@ export default function Providers({ children }: Props) {
   return (
     <>
       <ReactQueryProvider>
-        <StoreContextProvider>{children}</StoreContextProvider>
+        <StoreContextProvider>
+          <NuqsProvider>{children}</NuqsProvider>
+        </StoreContextProvider>
       </ReactQueryProvider>
     </>
   );
