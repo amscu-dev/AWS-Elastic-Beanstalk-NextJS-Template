@@ -16,7 +16,13 @@
   },
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js App",
+      "onAutoForward": "openBrowser"
+    }
+  },
   // speed up node modules install
   "mounts": [
     "source=project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
