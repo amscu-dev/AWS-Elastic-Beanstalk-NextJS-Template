@@ -17,9 +17,13 @@
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
-
+  // speed up node modules install
+  "mounts": [
+    "source=project-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "npm install"
+  "postCreateCommand": "bash -c 'sudo chown node:node node_modules && npm install'",
+  "postStartCommand": "bash -c 'npm run dev'"
 
   // Configure tool-specific properties.
   // "customizations": {},
