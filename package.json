@@ -89,7 +89,7 @@
     "axios": "1.15.0",
     "fast-memoize": "^2.5.2",
     "flagsmith-nodejs": "^8.0.2",
-    "next": "16.2.2",
+    "next": "16.2.3",
     "nuqs": "^2.8.9",
     "proxy-memoize": "^3.0.1",
     "react": "19.2.4",
