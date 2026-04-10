@@ -30,10 +30,10 @@ jobs:
       - run-tests
     runs-on: ubuntu-24.04
     outputs:
-      aws-url: "http://${{ steps.deploy-vercel.outputs.preview-url }}"
+      aws-url: "${{ steps.deploy-vercel.outputs.preview-url }}"
     environment:
       name: ${{ inputs.github-env }}
-      url: "http://${{ steps.deploy-vercel.outputs.preview-url }}"
+      url: "${{ steps.deploy-vercel.outputs.preview-url }}"
     permissions:
       deployments: write
     steps:
@@ -82,5 +82,4 @@ jobs:
           github-deployment: true
           github-deployment-environment: ${{ inputs.github-env }}
           target: ${{ inputs.github-env == 'production' && 'production' || 'preview' }}
-          alias-domains: |
-            ${{ inputs.github-env }}-${{ github.ref_name }}-${{ github.sha }}.myapp.vercel.app
+          vercel-output-dir: .vercel/output
