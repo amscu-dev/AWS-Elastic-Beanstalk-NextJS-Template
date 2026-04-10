@@ -1,0 +1,80 @@
+name: Deploy to Vercel
+
+run-name: "Deploy to ${{ inputs.github-env }} | ${{ github.actor }} | Vercel"
+on:
+  workflow_dispatch:
+    inputs:
+      github-env:
+        description: "GitHub Deployment Environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{inputs.github-env}}
+  cancel-in-progress: true
+jobs:
+  run-tests:
+    uses: ./.github/workflows/test-build.yaml
+    permissions:
+      pull-requests: write
+      contents: read
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  deploy:
+    needs:
+      - run-tests
+    runs-on: ubuntu-24.04
+    outputs:
+      aws-url: "http://${{ steps.deploy-vercel.outputs.preview-url }}"
+    environment:
+      name: ${{ inputs.github-env }}
+      url: "http://${{ steps.deploy-vercel.outputs.preview-url }}"
+    permissions:
+      deployments: write
+    steps:
+      - name: Checkout Reposiotry Code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node Environment
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: "npm"
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Build Project Artifacts
+        run: |
+          if [ "${{ inputs.github-env }}" == "production" ]; then
+            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          fi
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v42.2.0
+        id: deploy-vercel
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-project-name: ${{secrets.VERCEL_PROJECT_NAME}}
+          prebuilt: true
+          github-deployment: true
+          github-deployment-environment: ${{ inputs.github-env }}
+          target: ${{ inputs.github-env == 'production' && 'production' || 'preview' }}
+          alias-domains: |
+            ${{ inputs.github-env }}-${{ github.ref_name }}-${{ github.sha }}.myapp.vercel.app

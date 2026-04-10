@@ -1,6 +1,6 @@
 name: Deploy to AWS Elastic Beanstalk
 
-run-name: "Deploy to ${{ inputs.github-env }} | ${{ github.actor }}"
+run-name: "Deploy to ${{ inputs.github-env }} | ${{ github.actor }} | AWS"
 on:
   workflow_dispatch:
     inputs:
