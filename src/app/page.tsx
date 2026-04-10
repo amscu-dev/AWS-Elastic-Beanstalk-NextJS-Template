@@ -4,13 +4,6 @@ import Loader from "@/components/ui/Loader";
 import Image from "next/image";
 import { Suspense } from "react";
 
-import PostWithHydratationBoundary from "@/features/featureA/components/PostWithHydratationBoundary";
-import { ErrorBoundary } from "react-error-boundary";
-
-import PostErrorFallback from "@/features/featureA/components/PostErrorFallback";
-import NuqsComponent from "@/components/NuqsComponent";
-import Test from "@/features/featureA/components/Test";
-
 export const revalidate = 0;
 
 export default function Home() {
@@ -20,19 +13,6 @@ export default function Home() {
         <Suspense fallback={<Loader />}>
           <FeatureTest />
         </Suspense>
-
-        <ErrorBoundary FallbackComponent={PostErrorFallback}>
-          <Suspense fallback={<p>Loading...</p>}>
-            <PostWithHydratationBoundary />
-          </Suspense>
-        </ErrorBoundary>
-        <ErrorBoundary FallbackComponent={PostErrorFallback}>
-          <Suspense fallback={<p>Loading...</p>}>
-            <PostWithHydratationBoundary />
-          </Suspense>
-        </ErrorBoundary>
-
-        <NuqsComponent />
         <Image
           className="dark:invert"
           src="/next.svg"

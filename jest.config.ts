@@ -9,14 +9,28 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const config: Config = {
   coverageProvider: "v8",
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-fixed-jsdom",
   testPathIgnorePatterns: ["<rootDir>/e2e/"],
   // Add more setup options before each test is run
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
 };
 
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config);
+// createJestConfig is exported th is way to ensure that next/jest can load the Next.js config which is async
+// export default createJestConfig(config);
+
+const getJestConfig = createJestConfig(config);
+const fixedESMJestConfig = async () => {
+  const config = await getJestConfig();
+
+  return {
+    ...config,
+    transformIgnorePatterns: [
+      "/node_modules/(?!(msw|@mswjs|@open-draft|until-async|rettime)/)",
+    ],
+  };
+};
+export default fixedESMJestConfig;

@@ -12,11 +12,6 @@ jest.mock("@/components/ui/Loader", () => ({
   default: () => <div>Loading...</div>,
 }));
 
-jest.mock("@/features/featureA/components/PostSuspense", () => ({
-  __esModule: true,
-  default: () => <div>Mocked PostSuspense</div>,
-}));
-
 describe("Home Page", () => {
   beforeEach(async () => {
     jest.clearAllMocks();

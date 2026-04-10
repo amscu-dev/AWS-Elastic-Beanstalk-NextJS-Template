@@ -298,7 +298,7 @@ describe("post hooks", () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    console.log(result.current.data);
+
     expect(result.current.data).toEqual([
       { id: 1, title: "Default Post", userId: 1, completed: false },
     ]);
