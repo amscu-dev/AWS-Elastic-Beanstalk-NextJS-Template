@@ -10,8 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:ci": "eslint . --max-warnings=0",
-    "lint:md": "markdownlint --ignore-path .markdownlintignore \"**/*.md\"",
-    "lint:md:fix": "markdownlint --fix --ignore-path .markdownlintignore \"**/*.md\"",
+    "lint:md": "markdownlint --config .github/linters/.markdownlint.yaml --ignore-path .markdownlintignore \"**/*.md\"",
+    "lint:md:fix": "markdownlint --config .github/linters/.markdownlint.yaml --fix --ignore-path .markdownlintignore \"**/*.md\"",
     "format:fix": "prettier --write .",
     "format:check": "prettier --check .",
     "format:sh": "prettier --write ./scripts/*.sh",
@@ -45,7 +45,7 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{md}": [
+    "*.md": [
       "prettier --write",
       "markdownlint --config .github/linters/.markdownlint.yaml --ignore-path .markdownlintignore --fix"
     ],
@@ -71,6 +71,11 @@
         "external-editor": {
           "tmp": "0.2.5"
         }
+      }
+    },
+    "@vercel/config": {
+      "@vercel/routing-utils": {
+        "path-to-regexp": "6.3.0"
       }
     }
   },
@@ -108,6 +113,7 @@
     "@types/node": "^25.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vercel/config": "^0.1.0",
     "commitizen": "^4.3.1",
     "cspell": "^10.0.0",
     "cz-conventional-changelog": "^3.3.0",
