@@ -3,6 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
+import json from "eslint-plugin-json";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -125,6 +126,14 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+    },
+  },
+  {
+    files: ["**/*.json"],
+    plugins: { json },
+    processor: "json/json",
+    rules: {
+      "json/*": ["error", { allowComments: true }],
     },
   },
 ]);

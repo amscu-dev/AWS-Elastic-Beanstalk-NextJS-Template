@@ -1,0 +1,9 @@
+node_modules/**
+.next/**
+coverage/**
+dist/**
+out/**
+storybook-static/**
+playwright-report/**
+CHANGELOG.md
+.changeset/**
