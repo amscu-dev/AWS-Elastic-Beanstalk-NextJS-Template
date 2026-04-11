@@ -128,6 +128,31 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    files: ["**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": "off",
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "react-redux",
+              importNames: ["useSelector", "useDispatch"],
+              message:
+                "Use typed hooks `useAppDispatch` and `useAppSelector` instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/store/hooks.ts"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": "off",
+    },
+  },
   ...eslintPluginJsonc.configs["recommended-with-json"],
   {
     files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
