@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Get Pull Request Head Ref
         id: get-head-ref
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -26,7 +26,7 @@ jobs:
             console.log(response.data)
             return response.data.head.ref
       - name: Trigger a Branch Deploy
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const response = await github.rest.actions.createWorkflowDispatch({
