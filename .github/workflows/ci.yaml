@@ -53,3 +53,9 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     permissions:
       pull-requests: write
+  scan-gitguardian:
+    uses: ./.github/workflows/gitguardian.yaml
+    permissions:
+      contents: read
+    secrets:
+      GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
