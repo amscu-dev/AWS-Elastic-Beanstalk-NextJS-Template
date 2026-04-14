@@ -1,5 +1,6 @@
 name: GitGuardian Secret Scan
 
+run-name: "GitGuardian Secret Scan on ${{ github.ref_name }} by @${{ github.actor }}"
 on:
   workflow_call:
     secrets:
