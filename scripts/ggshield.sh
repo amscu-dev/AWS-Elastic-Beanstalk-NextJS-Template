@@ -1,33 +1,34 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "🔧 [DEBUG] ggshield.sh pornit"
-echo "🔧 [DEBUG] Argumente primite: $@"
+echo "🔧 [DEBUG] ggshield.sh started"
+echo "🔧 [DEBUG] Received arguments: $@"
 echo "🔧 [DEBUG] Working directory: $(pwd)"
 
-# Load GITGUARDIAN_API_KEY din .env
+# Load GITGUARDIAN_API_KEY from .env
 if [ -f .env ]; then
-  echo "🔧 [DEBUG] .env gasit, incarc variabilele..."
-  export $(grep -v '^#' .env | grep 'GITGUARDIAN_API_KEY' | xargs)
+  echo "🔧 [DEBUG] .env file found, loading variables..."
+  export GITGUARDIAN_API_KEY=$(awk -F= '$1=="GITGUARDIAN_API_KEY" {print substr($0, index($0,"=")+1)}' .env)
 else
-  echo "🔧 [DEBUG] .env NU a fost gasit in $(pwd)"
+  echo "🔧 [DEBUG] .env file NOT found in $(pwd)"
 fi
 
 if [ -z "${GITGUARDIAN_API_KEY:-}" ]; then
-  echo "❌ GITGUARDIAN_API_KEY lipsește din .env"
+  echo "❌ GITGUARDIAN_API_KEY is missing from .env"
   exit 1
 fi
 
-echo "🔧 [DEBUG] API Key incarcat: ${GITGUARDIAN_API_KEY:0:6}***" # primele 6 caractere doar
+echo "🔧 [DEBUG] API Key loaded: ${GITGUARDIAN_API_KEY:0:6}***" # first 6 chars only
 echo "🔧 [DEBUG] Docker image: gitguardian/ggshield"
-echo "🔧 [DEBUG] Stdin primit:"
+echo "🔧 [DEBUG] STDIN received:"
+
 cat - | tee /dev/stderr | docker run --rm -i \
   -e GITGUARDIAN_API_KEY \
   -v "$(pwd):/data" \
   -w /data \
   gitguardian/ggshield \
-  secret scan pre-push \
+  ggshield secret scan pre-push \
   --verbose \
   "$@"
 
-echo "✅ [DEBUG] ggshield scan finalizat cu succes"
+echo "✅ [DEBUG] ggshield scan completed successfully"
