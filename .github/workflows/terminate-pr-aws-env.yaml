@@ -67,7 +67,7 @@ jobs:
       - name: Get Pull Request Head Ref
         if: github.event_name == 'issue_comment' && steps.check-env.outputs.should_terminate == 'true'
         id: get-head-ref
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -80,7 +80,7 @@ jobs:
 
       - name: Get deployment ID
         if: steps.check-env.outputs.should_terminate == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         id: get-latest-deployment
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref || steps.get-head-ref.outputs.result }}
@@ -97,7 +97,7 @@ jobs:
 
       - name: Add Inactive Status
         if: steps.get-latest-deployment.outputs.result != '' && steps.check-env.outputs.should_terminate == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const response = await github.rest.repos.createDeploymentStatus({
@@ -109,7 +109,7 @@ jobs:
             console.log(response)
 
       - name: Update Pull Request (Failure)
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         if: failure() && steps.check-env.outputs.should_terminate == 'true'
         continue-on-error: true
         with:
@@ -126,7 +126,7 @@ jobs:
             })
 
       - name: Update Pull Request (Success)
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         if: success() && steps.check-env.outputs.should_terminate == 'true'
         continue-on-error: true
         with:
