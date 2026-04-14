@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "🔧 [DEBUG] pre-push hook pornit"
+echo "🔧 [DEBUG] Argumente primite de la git: $@"
+echo "🔧 [DEBUG] Remote name: $1"
+echo "🔧 [DEBUG] Remote URL: $2"
+echo "🔧 [DEBUG] Stdin (commit range):"
+npm run ggshield -- "$@"
