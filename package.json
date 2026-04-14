@@ -38,7 +38,8 @@
     "actionlint:staged": "bash ./scripts/actionlint.sh staged",
     "zizmor:online": "bash ./scripts/zizmor.sh online",
     "zizmor:offline": "bash ./scripts/zizmor.sh offline",
-    "zizmor:staged": "bash ./scripts/zizmor.sh staged"
+    "zizmor:staged": "bash ./scripts/zizmor.sh staged",
+    "ggshield": "bash ./scripts/ggshield.sh"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
