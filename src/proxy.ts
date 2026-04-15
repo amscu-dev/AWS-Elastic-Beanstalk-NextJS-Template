@@ -7,5 +7,8 @@ export function proxy(_request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Match all pathnames except for
+  // - … if they start with `/_next`, `/_vercel` or `monitoring`
+  // - … the ones containing a dot (e.g. `favicon.ico`)
+  matcher: "/((?!_next|_vercel|monitoring|.*\\..*).*)",
 };
