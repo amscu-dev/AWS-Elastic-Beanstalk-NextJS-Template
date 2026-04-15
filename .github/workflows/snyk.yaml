@@ -13,6 +13,8 @@ on:
     branches:
       - main
 
+  # schedule:
+  #   - cron: "0 8 * * *"
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -59,12 +61,12 @@ jobs:
         run: |
           snyk test --org=${{ secrets.SNYK_ORG }} \
           --severity-threshold=medium \
-          --dev \
           --all-projects \
           --sarif-file-output=snyk-results-opensource.sarif \
           --json-file-output=snyk-results-opensource.json
 
-      - name: Snyk Code Scanning
+      - name: Snyk Code
+        if: always()
         run: |
           snyk code test --org=${{ secrets.SNYK_ORG }} \
           --severity-threshold=medium \
