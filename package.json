@@ -3,7 +3,8 @@
   "version": "0.0.4",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:spotlight": "npx @spotlightjs/spotlight",
+    "dev:next": "next dev",
     "build": "next build --webpack",
     "start": "next start",
     "prod": "next build --webpack && next start",
@@ -88,6 +89,7 @@
     "@changesets/cli": "^2.30.0",
     "@next/bundle-analyzer": "^16.2.3",
     "@reduxjs/toolkit": "^2.11.2",
+    "@sentry/nextjs": "^10.48.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "@tanstack/react-query": "^5.99.0",
     "@tanstack/react-query-devtools": "^5.99.0",

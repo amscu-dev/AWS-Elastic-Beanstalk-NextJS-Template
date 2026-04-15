@@ -54,7 +54,11 @@ const eslintConfig = defineConfig([
         {
           mode: "full",
           type: "neverImport",
-          pattern: ["src/proxy.ts"],
+          pattern: [
+            "src/proxy.ts",
+            "src/instrumentation.ts",
+            "src/instrumentation-client.ts",
+          ],
         },
       ],
     },
