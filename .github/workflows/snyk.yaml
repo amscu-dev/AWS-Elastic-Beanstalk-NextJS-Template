@@ -74,8 +74,8 @@ jobs:
       - name: Parse json to html snyk
         if: always()
         run: |
-          snyk-to-html -i snyk-results-opensource.json -o results-opensource.html
-          snyk-to-html -i snyk-results-code.json -o results-code.html
+          snyk-to-html -i snyk-results-opensource.json -o snyk-results-opensource.html
+          snyk-to-html -i snyk-results-code.json -o snyk-results-code.html
 
       # ─── SARIF Upload → GitHub Security Tab
       - name: Upload Open Source SARIF to GitHub Security Tab
