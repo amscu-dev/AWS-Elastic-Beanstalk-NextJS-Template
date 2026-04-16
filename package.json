@@ -14,8 +14,8 @@
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix ",
     "lint:ci": "eslint . --max-warnings=0 ",
-    "lint:md": "markdownlint --config .github/linters/.markdownlint.yaml --ignore-path .markdownlintignore \"**/*.md\"",
-    "lint:md:fix": "markdownlint --config .github/linters/.markdownlint.yaml --fix --ignore-path .markdownlintignore \"**/*.md\"",
+    "lint:md": "markdownlint --config .github/linters/.markdownlint.yml --ignore-path .markdownlintignore \"**/*.md\"",
+    "lint:md:fix": "markdownlint --config .github/linters/.markdownlint.yml --fix --ignore-path .markdownlintignore \"**/*.md\"",
     "format:fix": "prettier --write .",
     "format:check": "prettier --check .",
     "format:sh": "prettier --write ./scripts/*.sh",
@@ -52,7 +52,7 @@
     ],
     "*.md": [
       "prettier --write",
-      "markdownlint --config .github/linters/.markdownlint.yaml --ignore-path .markdownlintignore --fix"
+      "markdownlint --config .github/linters/.markdownlint.yml --ignore-path .markdownlintignore --fix"
     ],
     "*.{yaml,yml}": [
       "prettier --write"
