@@ -57,17 +57,28 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Build Project Artifacts
-        run: |
-          if [ "${{ inputs.github-env }}" == "production" ]; then
-            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          fi
+      - name: Build Project Artifacts (Production)
+        if: inputs.github-env == 'production'
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+          NEXT_PUBLIC_SENTRY_DISABLED: false
+          SENTRY_ORGANIZATION: ${{ secrets.SENTRY_ORGANIZATION }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          VERCEL: 1
+
+      - name: Build Project Artifacts (Non-Production)
+        if: inputs.github-env != 'production'
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+          NEXT_PUBLIC_SENTRY_DISABLED: true
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v42.2.0

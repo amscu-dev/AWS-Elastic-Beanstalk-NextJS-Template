@@ -96,10 +96,23 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Build Project
-        run: npm  run build
+      - name: Build Project (Production)
+        if: inputs.github-env == 'production'
+        run: npm run build
         env:
           FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+          NEXT_PUBLIC_SENTRY_DISABLED: false
+          SENTRY_ORGANIZATION: ${{ secrets.SENTRY_ORGANIZATION }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Build Project (Non-Production)
+        if: inputs.github-env != 'production'
+        run: npm run build
+        env:
+          FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+          NEXT_PUBLIC_SENTRY_DISABLED: true
 
       - uses: actions/cache@v5
         with:
