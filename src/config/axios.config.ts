@@ -1,5 +1,6 @@
+import axios, { AxiosInstance, AxiosError } from "axios";
+
 import { OptionalConfig, RequiredConfig } from "@/types/axios.types";
-import axios, { AxiosError, AxiosInstance } from "axios";
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3001",
@@ -18,7 +19,7 @@ axiosInstance.interceptors.response.use(
 
 export const customAxiosInstance = async <T>(
   config: RequiredConfig,
-  { signal, axiosOptions }: OptionalConfig = {},
+  { axiosOptions, signal }: OptionalConfig = {},
 ): Promise<T> => {
   return axiosInstance<T>({
     ...config,

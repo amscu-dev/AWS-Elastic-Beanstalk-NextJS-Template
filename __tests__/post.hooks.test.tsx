@@ -1,33 +1,34 @@
-import { renderHook, waitFor, act } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { renderHook, waitFor, act } from "@testing-library/react";
 
 import {
   useGetAllPosts,
   useGetPostById,
   useCreatePost,
-  usePatchPost,
   useDeletePost,
+  usePatchPost,
 } from "@/features/featureA/services/post.hooks";
-import { postsApi } from "@/features/featureA/services/post.api";
 import { postQueryKeys } from "@/features/featureA/services/post.queryKeys";
+import { postsApi } from "@/features/featureA/services/post.api";
 
 jest.mock("@/features/featureA/services/post.api", () => ({
   postsApi: {
-    getAll: jest.fn().mockResolvedValue({
-      data: [{ id: 1, title: "Default Post", userId: 1, completed: false }],
-      meta: { requestId: "default-getAll" },
-    }),
     getById: jest.fn().mockResolvedValue({
-      data: { id: 1, title: "Default By Id", userId: 1, completed: false },
+      data: { title: "Default By Id", completed: false, userId: 1, id: 1 },
       meta: { requestId: "default-getById" },
     }),
     create: jest.fn().mockResolvedValue({
-      data: { id: 2, title: "Default Created", userId: 1, completed: false },
+      data: { title: "Default Created", completed: false, userId: 1, id: 2 },
       meta: { requestId: "default-create" },
     }),
+    getAll: jest.fn().mockResolvedValue({
+      data: [{ title: "Default Post", completed: false, userId: 1, id: 1 }],
+      meta: { requestId: "default-getAll" },
+    }),
     patch: jest.fn().mockResolvedValue({
-      data: { id: 1, title: "Default Patched", userId: 1, completed: true },
+      data: { title: "Default Patched", completed: true, userId: 1, id: 1 },
       meta: { requestId: "default-patch" },
     }),
     delete: jest.fn().mockResolvedValue(undefined),
@@ -37,8 +38,8 @@ jest.mock("@/features/featureA/services/post.api", () => ({
 const createTestQueryClient = () =>
   new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
       mutations: { retry: false },
+      queries: { retry: false },
     },
   });
 
@@ -62,8 +63,8 @@ describe("post hooks", () => {
 
     mockedPostsApi.getAll.mockResolvedValueOnce({
       data: [
-        { id: 1, title: "Post 1", userId: 1, completed: false },
-        { id: 2, title: "Post 2", userId: 1, completed: true },
+        { completed: false, title: "Post 1", userId: 1, id: 1 },
+        { title: "Post 2", completed: true, userId: 1, id: 2 },
       ],
       meta: {
         requestId: "req-1",
@@ -78,8 +79,8 @@ describe("post hooks", () => {
 
     expect(mockedPostsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([
-      { id: 1, title: "Post 1", userId: 1, completed: false },
-      { id: 2, title: "Post 2", userId: 1, completed: true },
+      { completed: false, title: "Post 1", userId: 1, id: 1 },
+      { title: "Post 2", completed: true, userId: 1, id: 2 },
     ]);
   });
 
@@ -88,10 +89,10 @@ describe("post hooks", () => {
 
     mockedPostsApi.getById.mockResolvedValueOnce({
       data: {
-        id: 1,
+        completed: false,
         title: "Post 1",
         userId: 1,
-        completed: false,
+        id: 1,
       },
       meta: {
         requestId: "req-2",
@@ -112,10 +113,10 @@ describe("post hooks", () => {
       }),
     );
     expect(result.current.data).toEqual({
-      id: 1,
+      completed: false,
       title: "Post 1",
       userId: 1,
-      completed: false,
+      id: 1,
     });
   });
 
@@ -124,10 +125,10 @@ describe("post hooks", () => {
 
     mockedPostsApi.create.mockResolvedValueOnce({
       data: {
-        id: 3,
         title: "New Post",
-        userId: 1,
         completed: false,
+        userId: 1,
+        id: 3,
       },
       meta: {
         requestId: "req-3",
@@ -141,8 +142,8 @@ describe("post hooks", () => {
     await act(async () => {
       await result.current.mutateAsync({
         title: "New Post",
-        userId: 1,
         completed: false,
+        userId: 1,
       });
     });
 
@@ -152,8 +153,8 @@ describe("post hooks", () => {
     expect(mockedPostsApi.create).toHaveBeenCalledWith(
       {
         title: "New Post",
-        userId: 1,
         completed: false,
+        userId: 1,
       },
       expect.objectContaining({
         signal: expect.any(AbortSignal),
@@ -161,10 +162,10 @@ describe("post hooks", () => {
     );
     expect(result.current.data).toEqual({
       data: {
-        id: 3,
         title: "New Post",
-        userId: 1,
         completed: false,
+        userId: 1,
+        id: 3,
       },
       meta: {
         requestId: "req-3",
@@ -177,10 +178,10 @@ describe("post hooks", () => {
 
     mockedPostsApi.patch.mockResolvedValueOnce({
       data: {
-        id: 1,
         title: "Updated title",
-        userId: 1,
         completed: true,
+        userId: 1,
+        id: 1,
       },
       meta: {
         requestId: "req-4",
@@ -193,11 +194,11 @@ describe("post hooks", () => {
 
     await act(async () => {
       await result.current.mutateAsync({
-        id: 1,
         body: {
           title: "Updated title",
           completed: true,
         },
+        id: 1,
       });
     });
 
@@ -216,10 +217,10 @@ describe("post hooks", () => {
     );
     expect(result.current.data).toEqual({
       data: {
-        id: 1,
         title: "Updated title",
-        userId: 1,
         completed: true,
+        userId: 1,
+        id: 1,
       },
       meta: {
         requestId: "req-4",
@@ -258,10 +259,10 @@ describe("post hooks", () => {
 
     mockedPostsApi.patch.mockResolvedValueOnce({
       data: {
-        id: 10,
         title: "Patched",
-        userId: 1,
         completed: true,
+        userId: 1,
+        id: 10,
       },
       meta: {
         requestId: "req-5",
@@ -274,11 +275,11 @@ describe("post hooks", () => {
 
     await act(async () => {
       await result.current.mutateAsync({
-        id: 10,
         body: {
           title: "Patched",
           completed: true,
         },
+        id: 10,
       });
     });
 
@@ -300,7 +301,7 @@ describe("post hooks", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual([
-      { id: 1, title: "Default Post", userId: 1, completed: false },
+      { title: "Default Post", completed: false, userId: 1, id: 1 },
     ]);
   });
 
@@ -308,7 +309,7 @@ describe("post hooks", () => {
     const mockedPostsApi = jest.mocked(postsApi);
 
     mockedPostsApi.getAll.mockResolvedValueOnce({
-      data: [{ id: 100, title: "Typed mock", userId: 5, completed: false }],
+      data: [{ title: "Typed mock", completed: false, userId: 5, id: 100 }],
       meta: {
         requestId: "req-6",
       },
@@ -322,13 +323,13 @@ describe("post hooks", () => {
 
     expect(mockedPostsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([
-      { id: 100, title: "Typed mock", userId: 5, completed: false },
+      { title: "Typed mock", completed: false, userId: 5, id: 100 },
     ]);
   });
 
   test("extra - uses cast direct on method without jest.mocked for typesafety", async () => {
     (postsApi.getAll as jest.Mock).mockResolvedValueOnce({
-      data: [{ id: 200, title: "Cast mock", userId: 9, completed: true }],
+      data: [{ title: "Cast mock", completed: true, userId: 9, id: 200 }],
       meta: {
         requestId: "req-7",
       },
@@ -342,7 +343,7 @@ describe("post hooks", () => {
 
     expect(postsApi.getAll).toHaveBeenCalledTimes(1);
     expect(result.current.data).toEqual([
-      { id: 200, title: "Cast mock", userId: 9, completed: true },
+      { title: "Cast mock", completed: true, userId: 9, id: 200 },
     ]);
   });
 });

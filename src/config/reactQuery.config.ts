@@ -1,9 +1,10 @@
-import { isAppError } from "@/utils/handleApiError";
 import {
+  QueryClientConfig,
   MutationCache,
   QueryCache,
-  QueryClientConfig,
 } from "@tanstack/react-query";
+
+import { isAppError } from "@/utils/handleApiError";
 
 // Jitter Strategy
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
@@ -13,45 +14,8 @@ const decorrelatedRetryDelay = (attemptIndex: number) => {
 };
 
 const queryClientConfig: QueryClientConfig = {
-  queryCache: new QueryCache({
-    // Global onErrorHandler for useQuery
-    onError: (error) => {
-      if (!isAppError(error)) {
-        console.error("Unknown error");
-        return;
-      }
-
-      if (error.kind === "axios") {
-        const msg = error.error.response?.data.message || error.error.message;
-        console.error(msg);
-      } else if (error.kind === "validation") {
-        console.error(`Validation error: ${error.error.message}`);
-      } else {
-        console.error("Unknown error");
-      }
-    },
-  }),
-  mutationCache: new MutationCache({
-    // Global onErrorHandler for useQuery
-    onError: (error) => {
-      if (!isAppError(error)) {
-        console.error("Unknown error");
-        return;
-      }
-
-      if (error.kind === "axios") {
-        const msg = error.error.response?.data.message || error.error.message;
-        console.error(msg);
-      } else if (error.kind === "validation") {
-        console.error(`Validation error: ${error.error.message}`);
-      } else {
-        console.error("Unknown error");
-      }
-    },
-  }),
   defaultOptions: {
     queries: {
-      staleTime: 5 * 1000,
       retry: (failureCount, error) => {
         if (!isAppError(error)) return false;
 
@@ -70,6 +34,7 @@ const queryClientConfig: QueryClientConfig = {
         return failureCount < 3;
       },
       retryDelay: decorrelatedRetryDelay,
+      staleTime: 5 * 1000,
     },
 
     mutations: {
@@ -93,6 +58,42 @@ const queryClientConfig: QueryClientConfig = {
       retryDelay: decorrelatedRetryDelay,
     },
   },
+  mutationCache: new MutationCache({
+    // Global onErrorHandler for useQuery
+    onError: (error) => {
+      if (!isAppError(error)) {
+        console.error("Unknown error");
+        return;
+      }
+
+      if (error.kind === "axios") {
+        const msg = error.error.response?.data.message || error.error.message;
+        console.error(msg);
+      } else if (error.kind === "validation") {
+        console.error(`Validation error: ${error.error.message}`);
+      } else {
+        console.error("Unknown error");
+      }
+    },
+  }),
+  queryCache: new QueryCache({
+    // Global onErrorHandler for useQuery
+    onError: (error) => {
+      if (!isAppError(error)) {
+        console.error("Unknown error");
+        return;
+      }
+
+      if (error.kind === "axios") {
+        const msg = error.error.response?.data.message || error.error.message;
+        console.error(msg);
+      } else if (error.kind === "validation") {
+        console.error(`Validation error: ${error.error.message}`);
+      } else {
+        console.error("Unknown error");
+      }
+    },
+  }),
 };
 
 export default queryClientConfig;

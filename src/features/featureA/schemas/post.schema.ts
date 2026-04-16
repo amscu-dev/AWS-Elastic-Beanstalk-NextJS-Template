@@ -2,10 +2,10 @@ import z from "zod";
 
 // Schema de baza
 export const postSchema = z.object({
-  userId: z.number(),
-  id: z.number(),
-  title: z.string(),
   completed: z.boolean(),
+  userId: z.number(),
+  title: z.string(),
+  id: z.number(),
 });
 
 // DTO creare — fara id (generat de server)

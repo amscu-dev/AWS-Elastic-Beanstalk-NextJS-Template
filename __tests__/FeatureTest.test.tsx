@@ -1,13 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+
 import FeatureTest from "@/components/FeatureTest";
 import flagsmithInstance from "@/lib/flagsmith";
 
 jest.mock("@/lib/flagsmith", () => ({
-  __esModule: true,
   default: {
     getEnvironmentFlags: jest.fn(),
   },
+  __esModule: true,
 }));
 
 describe("FeatureTest", () => {

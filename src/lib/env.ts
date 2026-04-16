@@ -5,6 +5,6 @@ export const Env = createEnv({
   server: {
     FLAGSMITH_KEY: z.string().min(1),
   },
-  client: {},
   experimental__runtimeEnv: {},
+  client: {},
 });

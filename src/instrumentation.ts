@@ -1,13 +1,13 @@
 import * as Sentry from "@sentry/nextjs";
 
 const sentryOptions: Sentry.NodeOptions | Sentry.EdgeOptions = {
-  // Sentry DSN
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  integrations: [Sentry.consoleLoggingIntegration()],
 
   // Enable Spotlight in development
   spotlight: process.env.NODE_ENV === "development",
 
-  integrations: [Sentry.consoleLoggingIntegration()],
+  // Sentry DSN
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
   // Adds request headers and IP for users, for more info visit
   sendDefaultPii: true,

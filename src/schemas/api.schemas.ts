@@ -2,28 +2,28 @@ import { z } from "zod";
 
 // Sub-scheme
 const paginationSchema = z.object({
-  page: z.number(),
-  pageSize: z.number(),
-  total: z.number(),
-  totalPages: z.number(),
   hasNextPage: z.boolean(),
   hasPrevPage: z.boolean(),
+  totalPages: z.number(),
+  pageSize: z.number(),
+  total: z.number(),
+  page: z.number(),
 });
 
 const rateLimitSchema = z.object({
-  limit: z.number(),
-  remaining: z.number(),
   resetAt: z.iso.datetime(),
+  remaining: z.number(),
+  limit: z.number(),
 });
 
 export const metaSchema = z.object({
-  requestId: z.string(),
-  traceId: z.string().optional(),
+  pagination: paginationSchema.optional(),
   timestamp: z.iso.datetime().optional(),
   processingTime: z.number().optional(),
-  pagination: paginationSchema.optional(),
-  apiVersion: z.string().optional(),
   rateLimit: rateLimitSchema.optional(),
+  apiVersion: z.string().optional(),
+  traceId: z.string().optional(),
+  requestId: z.string(),
 });
 
 // Schema factory with generic — receives the data schema as parameter

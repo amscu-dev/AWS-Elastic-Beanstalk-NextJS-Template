@@ -1,6 +1,7 @@
-import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // Security Headers
 
@@ -44,7 +45,6 @@ const cspHeader = `
 `;
 
 const secHeaders = {
-  source: "/(.*)",
   headers: [
     {
       key: "X-DNS-Prefetch-Control",
@@ -59,19 +59,19 @@ const secHeaders = {
       value: "nosniff",
     },
     {
-      key: "Referrer-Policy",
       value: "origin-when-cross-origin",
+      key: "Referrer-Policy",
     },
     {
-      key: "Strict-Transport-Security",
       value:
         process.env.NODE_ENV === "production"
           ? "max-age=63072000; includeSubDomains; preload"
           : "",
+      key: "Strict-Transport-Security",
     },
     {
-      key: "Content-Security-Policy",
       value: cspHeader.replace(/\n/g, ""),
+      key: "Content-Security-Policy",
     },
     {
       key: "Cross-Origin-Opener-Policy",
@@ -82,11 +82,12 @@ const secHeaders = {
       value: "same-site",
     },
     {
-      key: "Permissions-Policy",
       //  Configure based on app needs
       value: "camera=(), microphone=(), geolocation=()",
+      key: "Permissions-Policy",
     },
   ],
+  source: "/(.*)",
 };
 
 const withBundleAnalyzer = bundleAnalyzer({
@@ -95,12 +96,12 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const baseConfig: NextConfig = {
-  /* config options here */
-  // cacheComponents: true,
-  reactStrictMode: false,
   async headers() {
     return [secHeaders];
   },
+  /* config options here */
+  // cacheComponents: true,
+  reactStrictMode: false,
   // experimental: {
   //   turbopackSourceMaps: true,
   //   turbopackInputSourceMaps: true,
@@ -122,27 +123,6 @@ if (process.env.ANALYZE === "true") {
 
 if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
   nextConfig = withSentryConfig(nextConfig, {
-    // For all available options, see:
-    // https://www.npmjs.com/package/@sentry/webpack-plugin#options
-    org: process.env.SENTRY_ORGANIZATION,
-    project: process.env.SENTRY_PROJECT,
-    authToken: process.env.SENTRY_AUTH_TOKEN,
-
-    // Only print logs for uploading source maps in CI
-    silent: !process.env.CI,
-
-    // For all available options, see:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-    // Upload a larger set of source maps for prettier stack traces (increases build time)
-    widenClientFileUpload: true,
-
-    // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-    // This can increase your server load as well as your hosting bill.
-    // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-    // side errors will fail.
-    // tunnelRoute: "/monitoring",
-
     webpack: {
       reactComponentAnnotation: {
         enabled: true,
@@ -153,13 +133,34 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
         removeDebugLogging: true,
       },
     },
-
-    // Disable Sentry telemetry
-    telemetry: false,
-
     sourcemaps: {
       disable: false,
     },
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+
+    // For all available options, see:
+    // https://www.npmjs.com/package/@sentry/webpack-plugin#options
+    org: process.env.SENTRY_ORGANIZATION,
+
+    // For all available options, see:
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+    project: process.env.SENTRY_PROJECT,
+
+    // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+    // This can increase your server load as well as your hosting bill.
+    // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+    // side errors will fail.
+    // tunnelRoute: "/monitoring",
+
+    // Upload a larger set of source maps for prettier stack traces (increases build time)
+    widenClientFileUpload: true,
+
+    // Only print logs for uploading source maps in CI
+    silent: !process.env.CI,
+
+    // Disable Sentry telemetry
+    telemetry: false,
   });
 }
 

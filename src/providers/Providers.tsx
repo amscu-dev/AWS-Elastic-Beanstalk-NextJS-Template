@@ -1,7 +1,8 @@
 "use client";
 import { ReactNode } from "react";
-import ReactQueryProvider from "./ReactQueryProvider";
+
 import StoreContextProvider from "./ReduxStoreProvider";
+import ReactQueryProvider from "./ReactQueryProvider";
 import NuqsProvider from "./NuqsProvider";
 
 interface Props {

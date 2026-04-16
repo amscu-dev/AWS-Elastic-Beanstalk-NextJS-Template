@@ -1,7 +1,8 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
-import type { AppDispatch, AppStore, RootState } from "@/store/store";
-import { useMemo } from "react";
 import { memoize } from "proxy-memoize";
+import { useMemo } from "react";
+
+import type { AppDispatch, RootState, AppStore } from "@/store/store";
 
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();

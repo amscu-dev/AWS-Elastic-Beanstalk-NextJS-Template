@@ -1,17 +1,16 @@
+import { HttpResponse, JsonBodyType, HttpMethods, PathParams, http } from "msw";
 import { setupServer } from "msw/node";
 
-import { http, HttpResponse, HttpMethods, JsonBodyType, PathParams } from "msw";
-
-type SupportedMethod = Lowercase<HttpMethods>;
-
 interface HandlerConfig {
-  path: string;
+  res: (info: { params: PathParams; request: Request }) => JsonBodyType;
   method?: SupportedMethod;
 
-  res: (info: { request: Request; params: PathParams }) => JsonBodyType;
-
   status?: number;
+
+  path: string;
 }
+
+type SupportedMethod = Lowercase<HttpMethods>;
 
 export function createServer(handlerConfigs: HandlerConfig[]) {
   const handlers = handlerConfigs.map((config) => {

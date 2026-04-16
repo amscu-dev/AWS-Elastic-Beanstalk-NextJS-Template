@@ -1,4 +1,5 @@
 import { Flagsmith } from "flagsmith-nodejs";
+
 import { Env } from "./env";
 
 const flagsmithInstance = new Flagsmith({

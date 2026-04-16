@@ -1,11 +1,13 @@
-import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
+import { globalIgnores, defineConfig } from "eslint/config";
+import eslintComments from "eslint-plugin-eslint-comments";
+import testingLibrary from "eslint-plugin-testing-library";
+import perfectionist from "eslint-plugin-perfectionist";
+import eslintPluginJsonc from "eslint-plugin-jsonc";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
-import eslintPluginJsonc from "eslint-plugin-jsonc";
-import eslintComments from "eslint-plugin-eslint-comments";
-import testingLibrary from "eslint-plugin-testing-library";
+// import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -20,13 +22,78 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
-    plugins: { boundaries },
+    rules: {
+      "boundaries/dependencies": [
+        "error",
+        {
+          rules: [
+            {
+              allow: { to: { type: "shared" } },
+              from: { type: "shared" },
+            },
+            {
+              message:
+                "[feature/{{from.captured.featureName}}] cannot import from [app]. Features must not depend on the app layer.",
+              disallow: {
+                to: { type: "app" },
+              },
+              from: { type: "feature" },
+            },
+            {
+              disallow: {
+                to: {
+                  captured: {
+                    featureName: "!{{from.captured.featureName}}",
+                  },
+                  type: "feature",
+                },
+              },
+              message:
+                "[feature/{{from.captured.featureName}}] cannot import from [feature/{{to.captured.featureName}}]. A feature may import only from itself or from shared.",
+              from: { type: "feature" },
+            },
+            {
+              allow: {
+                to: [
+                  { type: "shared" },
+                  {
+                    captured: {
+                      featureName: "{{ from.captured.featureName }}",
+                    },
+                    type: "feature",
+                  },
+                ],
+              },
+              from: { type: "feature" },
+            },
+            {
+              allow: {
+                to: [
+                  { type: "shared" },
+                  { type: "feature" },
+                  { captured: { fileName: "*.css" }, type: "app" },
+                ],
+              },
+              from: { type: "app" },
+            },
+            {
+              allow: {
+                to: [{ type: "shared" }, { type: "feature" }],
+              },
+              from: { type: "neverImport" },
+            },
+          ],
+          message:
+            "[{{from.type}}/{{from.captured.featureName}}] cannot import [{{to.type}}/{{to.captured.featureName}}]",
+          default: "disallow",
+        },
+      ],
+      "boundaries/no-unknown-files": ["error"],
+      "boundaries/no-unknown": ["error"],
+    },
     settings: {
-      "boundaries/include": ["src/**/*"],
       "boundaries/elements": [
         {
-          mode: "full",
-          type: "shared",
           pattern: [
             "src/components/**/*",
             "src/config/**/*",
@@ -40,124 +107,59 @@ const eslintConfig = defineConfig([
             "src/types/**/*",
             "src/utils/**/*",
           ],
+          type: "shared",
+          mode: "full",
         },
         {
-          mode: "full",
-          type: "feature",
-          capture: ["featureName"],
           pattern: ["src/features/*/**/*"],
+          capture: ["featureName"],
+          type: "feature",
+          mode: "full",
         },
         {
-          mode: "full",
-          type: "app",
           capture: ["_", "fileName"],
           pattern: ["src/app/**/*"],
+          mode: "full",
+          type: "app",
         },
         {
-          mode: "full",
-          type: "neverImport",
           pattern: [
             "src/proxy.ts",
             "src/instrumentation.ts",
             "src/instrumentation-client.ts",
           ],
+          type: "neverImport",
+          mode: "full",
         },
       ],
+      "boundaries/include": ["src/**/*"],
     },
-    rules: {
-      "boundaries/no-unknown": ["error"],
-      "boundaries/no-unknown-files": ["error"],
-      "boundaries/dependencies": [
-        "error",
-        {
-          default: "disallow",
-          message:
-            "[{{from.type}}/{{from.captured.featureName}}] cannot import [{{to.type}}/{{to.captured.featureName}}]",
-          rules: [
-            {
-              from: { type: "shared" },
-              allow: { to: { type: "shared" } },
-            },
-            {
-              from: { type: "feature" },
-              disallow: {
-                to: { type: "app" },
-              },
-              message:
-                "[feature/{{from.captured.featureName}}] cannot import from [app]. Features must not depend on the app layer.",
-            },
-            {
-              from: { type: "feature" },
-              disallow: {
-                to: {
-                  type: "feature",
-                  captured: {
-                    featureName: "!{{from.captured.featureName}}",
-                  },
-                },
-              },
-              message:
-                "[feature/{{from.captured.featureName}}] cannot import from [feature/{{to.captured.featureName}}]. A feature may import only from itself or from shared.",
-            },
-            {
-              from: { type: "feature" },
-              allow: {
-                to: [
-                  { type: "shared" },
-                  {
-                    type: "feature",
-                    captured: {
-                      featureName: "{{ from.captured.featureName }}",
-                    },
-                  },
-                ],
-              },
-            },
-            {
-              from: { type: "app" },
-              allow: {
-                to: [
-                  { type: "shared" },
-                  { type: "feature" },
-                  { type: "app", captured: { fileName: "*.css" } },
-                ],
-              },
-            },
-            {
-              from: { type: "neverImport" },
-              allow: {
-                to: [{ type: "shared" }, { type: "feature" }],
-              },
-            },
-          ],
-        },
-      ],
-    },
+    plugins: { boundaries },
   },
   {
-    files: ["**/*.{ts,tsx}"],
     rules: {
-      "no-restricted-imports": "off",
       "@typescript-eslint/no-restricted-imports": [
         "error",
         {
           paths: [
             {
-              name: "react-redux",
-              importNames: ["useSelector", "useDispatch"],
               message:
                 "Use typed hooks `useAppDispatch` and `useAppSelector` instead.",
+              importNames: ["useSelector", "useDispatch"],
+              name: "react-redux",
             },
           ],
         },
       ],
+      "no-restricted-imports": "off",
     },
+    files: ["**/*.{ts,tsx}"],
   },
   {
-    files: ["src/store/hooks.ts"],
     rules: {
       "@typescript-eslint/no-restricted-imports": "off",
     },
+    files: ["src/store/hooks.ts"],
   },
   ...eslintPluginJsonc.configs["recommended-with-json"],
   {
@@ -167,11 +169,13 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    plugins: {
-      "eslint-comments": eslintComments,
-    },
     // Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
     rules: {
+      "eslint-comments/require-description": [
+        "error",
+        { ignore: ["eslint-enable"] },
+      ],
+
       "eslint-comments/disable-enable-pair": [
         "error",
         { allowWholeFile: false },
@@ -186,17 +190,16 @@ const eslintConfig = defineConfig([
       "eslint-comments/no-unused-disable": "error",
 
       "eslint-comments/no-unused-enable": "error",
-
-      "eslint-comments/require-description": [
-        "error",
-        { ignore: ["eslint-enable"] },
-      ],
+    },
+    plugins: {
+      "eslint-comments": eslintComments,
     },
   },
   {
     files: ["**/__tests__/**/*.{jsx,tsx}"],
     ...testingLibrary.configs["flat/react"],
   },
+  perfectionist.configs["recommended-line-length"],
 ]);
 
 export default eslintConfig;

@@ -1,15 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+
 import Home from "@/app/page";
 
 jest.mock("@/components/FeatureTest", () => ({
-  __esModule: true,
   default: () => <div>This is a feature flag</div>,
+  __esModule: true,
 }));
 
 jest.mock("@/components/ui/Loader", () => ({
-  __esModule: true,
   default: () => <div>Loading...</div>,
+  __esModule: true,
 }));
 
 const setup = () => {

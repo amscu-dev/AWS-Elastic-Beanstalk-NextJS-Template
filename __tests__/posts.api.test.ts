@@ -1,58 +1,59 @@
 import { postsApi } from "@/features/featureA/services/post.api";
+
 import { createServer } from "../mocks/createServer";
 const BASE_URL = "http://localhost:3001";
 
 const mockMeta = {
+  timestamp: new Date().toISOString(),
   requestId: "req-123",
   traceId: "trace-123",
-  timestamp: new Date().toISOString(),
 };
 
 const mockPost = {
-  id: 1,
-  userId: 10,
   title: "Test title",
   completed: false,
+  userId: 10,
+  id: 1,
 };
 
 createServer([
   {
-    path: `${BASE_URL}/posts`,
-    method: "get",
     res: () => ({
       data: [mockPost],
       meta: mockMeta,
     }),
+    path: `${BASE_URL}/posts`,
+    method: "get",
   },
   {
-    path: `${BASE_URL}/posts/:id`,
-    method: "get",
     res: ({ params }) => ({
       data: { ...mockPost, id: Number(params.id) },
       meta: mockMeta,
     }),
+    path: `${BASE_URL}/posts/:id`,
+    method: "get",
   },
   {
-    path: `${BASE_URL}/posts`,
-    method: "post",
     res: () => ({
       data: mockPost,
       meta: mockMeta,
     }),
+    path: `${BASE_URL}/posts`,
+    method: "post",
   },
   {
-    path: `${BASE_URL}/posts/:id`,
-    method: "patch",
     res: ({ params }) => ({
-      data: { ...mockPost, id: Number(params.id), title: "Updated title" },
+      data: { ...mockPost, title: "Updated title", id: Number(params.id) },
       meta: mockMeta,
     }),
+    path: `${BASE_URL}/posts/:id`,
+    method: "patch",
   },
   {
     path: `${BASE_URL}/posts/:id`,
     method: "delete",
-    status: 204,
     res: () => null,
+    status: 204,
   },
 ]);
 
@@ -61,19 +62,19 @@ describe("postsApi", () => {
     const result = await postsApi.getAll();
 
     expect(result).toEqual({
-      data: [
-        {
-          id: 1,
-          userId: 10,
-          title: "Test title",
-          completed: false,
-        },
-      ],
       meta: expect.objectContaining({
+        timestamp: expect.any(String),
         requestId: "req-123",
         traceId: "trace-123",
-        timestamp: expect.any(String),
       }),
+      data: [
+        {
+          title: "Test title",
+          completed: false,
+          userId: 10,
+          id: 1,
+        },
+      ],
     });
   });
 
@@ -81,41 +82,41 @@ describe("postsApi", () => {
     const result = await postsApi.getById(5);
 
     expect(result).toEqual({
-      data: {
-        id: 5,
-        userId: 10,
-        title: "Test title",
-        completed: false,
-      },
       meta: expect.objectContaining({
+        timestamp: expect.any(String),
         requestId: "req-123",
         traceId: "trace-123",
-        timestamp: expect.any(String),
       }),
+      data: {
+        title: "Test title",
+        completed: false,
+        userId: 10,
+        id: 5,
+      },
     });
   });
 
   it("create should return the created post", async () => {
     const payload = {
-      userId: 10,
       title: "New post",
       completed: false,
+      userId: 10,
     };
 
     const result = await postsApi.create(payload);
 
     expect(result).toEqual({
-      data: {
-        id: 1,
-        userId: 10,
-        title: "Test title",
-        completed: false,
-      },
       meta: expect.objectContaining({
+        timestamp: expect.any(String),
         requestId: "req-123",
         traceId: "trace-123",
-        timestamp: expect.any(String),
       }),
+      data: {
+        title: "Test title",
+        completed: false,
+        userId: 10,
+        id: 1,
+      },
     });
   });
 
@@ -127,17 +128,17 @@ describe("postsApi", () => {
     const result = await postsApi.patch(7, payload);
 
     expect(result).toEqual({
-      data: {
-        id: 7,
-        userId: 10,
-        title: "Updated title",
-        completed: false,
-      },
       meta: expect.objectContaining({
+        timestamp: expect.any(String),
         requestId: "req-123",
         traceId: "trace-123",
-        timestamp: expect.any(String),
       }),
+      data: {
+        title: "Updated title",
+        completed: false,
+        userId: 10,
+        id: 7,
+      },
     });
   });
 

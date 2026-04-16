@@ -1,19 +1,21 @@
-import { ApiResponse } from "@/types/api.types";
-import { CreatePostDto, Post, UpdatePostDto } from "../types/post.types";
-import memoize from "fast-memoize";
 import {
   UseSuspenseQueryOptions,
   UseMutationOptions,
-  useMutation,
-  useQueryClient,
   useSuspenseQuery,
+  useQueryClient,
+  useMutation,
 } from "@tanstack/react-query";
+import { environmentManager } from "@tanstack/react-query";
+import memoize from "fast-memoize";
+import { useRef } from "react";
+
+import { OptionalConfig } from "@/types/axios.types";
+import { ApiResponse } from "@/types/api.types";
+import { AppError } from "@/types/errors.types";
+
+import { CreatePostDto, UpdatePostDto, Post } from "../types/post.types";
 import { postQueryKeys } from "./post.queryKeys";
 import { postsApi } from "./post.api";
-import { OptionalConfig } from "@/types/axios.types";
-import { AppError } from "@/types/errors.types";
-import { useRef } from "react";
-import { environmentManager } from "@tanstack/react-query";
 // useMutation<TData, TError, TVariables, TContext>
 // TData      — what mutationFn returns (server response)
 // TError     — error type
@@ -34,10 +36,10 @@ export const useGetAllPosts = <TData = Post[]>(
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
   return useSuspenseQuery<ApiResponse<Post[]>, AppError, TData>({
-    queryKey: postQueryKeys.all(),
     queryFn: ({ signal }) =>
       postsApi.getAll({ signal, ...optionalAxiosConfig }),
     select: (response) => response.data as TData,
+    queryKey: postQueryKeys.all(),
     ...queryConfig,
   });
 };
@@ -47,12 +49,6 @@ export const useGetAllPosts = <TData = Post[]>(
 // Singleton on browser (reutilised between re-renders)
 let browserSelectPost: ((response: ApiResponse<Post>) => Post) | undefined =
   undefined;
-
-function makeSelectPost() {
-  return memoize((response: ApiResponse<Post>) => {
-    return response.data;
-  });
-}
 
 export function getSelectPost() {
   if (environmentManager.isServer()) {
@@ -69,6 +65,12 @@ export function getSelectPost() {
   }
 }
 
+function makeSelectPost() {
+  return memoize((response: ApiResponse<Post>) => {
+    return response.data;
+  });
+}
+
 export const useGetPostById = <TData = Post>(
   id: number,
   queryConfig?: Omit<
@@ -83,10 +85,10 @@ export const useGetPostById = <TData = Post>(
   // }, []);
 
   return useSuspenseQuery<ApiResponse<Post>, AppError, TData>({
-    queryKey: postQueryKeys.byId(id),
     queryFn: ({ signal }) =>
       postsApi.getById(id, { signal, ...optionalAxiosConfig }),
     select: getSelectPost() as (response: ApiResponse<Post>) => TData,
+    queryKey: postQueryKeys.byId(id),
     ...queryConfig,
   });
 };
@@ -102,7 +104,6 @@ export const useCreatePost = (
   const controllerRef = useRef<AbortController | null>(null);
 
   return useMutation<ApiResponse<Post>, AppError, CreatePostDto>({
-    mutationKey: postQueryKeys.create(),
     mutationFn: (body) => {
       controllerRef.current?.abort();
       controllerRef.current = new AbortController();
@@ -115,6 +116,7 @@ export const useCreatePost = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
+    mutationKey: postQueryKeys.create(),
     ...mutationConfig,
   });
 };
@@ -124,7 +126,7 @@ export const usePatchPost = (
     UseMutationOptions<
       ApiResponse<Post>,
       AppError,
-      { id: number; body: UpdatePostDto }
+      { body: UpdatePostDto; id: number }
     >,
     "mutationKey" | "mutationFn"
   >,
@@ -136,10 +138,9 @@ export const usePatchPost = (
   return useMutation<
     ApiResponse<Post>,
     AppError,
-    { id: number; body: UpdatePostDto }
+    { body: UpdatePostDto; id: number }
   >({
-    mutationKey: postQueryKeys.patch(),
-    mutationFn: ({ id, body }) => {
+    mutationFn: ({ body, id }) => {
       controllerRef.current?.abort();
       controllerRef.current = new AbortController();
 
@@ -152,6 +153,7 @@ export const usePatchPost = (
       queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
       queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
+    mutationKey: postQueryKeys.patch(),
     ...mutationConfig,
   });
 };
@@ -167,7 +169,6 @@ export const useDeletePost = (
   const controllerRef = useRef<AbortController | null>(null);
 
   return useMutation<void, AppError, number>({
-    mutationKey: postQueryKeys.delete(),
     mutationFn: (id) => {
       controllerRef.current?.abort();
       controllerRef.current = new AbortController();
@@ -181,6 +182,7 @@ export const useDeletePost = (
       queryClient.invalidateQueries({ queryKey: postQueryKeys.byId(id) });
       queryClient.invalidateQueries({ queryKey: postQueryKeys.all() });
     },
+    mutationKey: postQueryKeys.delete(),
     ...mutationConfig,
   });
 };

@@ -5,14 +5,12 @@ import * as Sentry from "@sentry/nextjs";
 
 if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
   Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-
     // Add optional integrations for additional features
     integrations: [
       Sentry.replayIntegration({
-        maskAllText: false,
         maskAllInputs: false,
         blockAllMedia: false,
+        maskAllText: false,
       }),
       Sentry.consoleLoggingIntegration(),
       Sentry.browserTracingIntegration(),
@@ -22,11 +20,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
         : []),
     ],
 
-    // Adds request headers and IP for users, for more info visit
-    sendDefaultPii: true,
-
-    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-    tracesSampleRate: 1,
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
     // Define how likely Replay events are sampled.
     // This sets the sample rate to be 10%. You may want this to be 100% while
@@ -35,6 +29,12 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
 
     // Define how likely Replay events are sampled when an error occurs.
     replaysOnErrorSampleRate: 1,
+
+    // Adds request headers and IP for users, for more info visit
+    sendDefaultPii: true,
+
+    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+    tracesSampleRate: 1,
 
     // Enable logs to be sent to Sentry
     enableLogs: true,

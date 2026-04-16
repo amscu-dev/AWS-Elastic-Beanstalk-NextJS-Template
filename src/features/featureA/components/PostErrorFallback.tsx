@@ -1,10 +1,11 @@
 "use client";
-import { isAppError } from "@/utils/handleApiError";
 import { FallbackProps } from "react-error-boundary";
 
+import { isAppError } from "@/utils/handleApiError";
+
 export default function PostErrorFallback({
-  error,
   resetErrorBoundary,
+  error,
 }: FallbackProps) {
   const is404 =
     isAppError(error) &&
