@@ -52,7 +52,7 @@ const createProxySelectorHook = <TState extends object>() => {
     fn: (state: TState) => TReturnType,
     deps: React.DependencyList = [],
   ): TReturnType => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- need to receive deps dynamic from component
     const selector = useMemo(() => memoize(fn), deps);
     return useTypedSelector(selector);
   };

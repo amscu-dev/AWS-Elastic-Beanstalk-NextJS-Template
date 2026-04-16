@@ -4,6 +4,7 @@ import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
 import eslintPluginJsonc from "eslint-plugin-jsonc";
+import eslintComments from "eslint-plugin-eslint-comments";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -162,6 +163,33 @@ const eslintConfig = defineConfig([
     files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
     rules: {
       "jsonc/no-comments": "off",
+    },
+  },
+  {
+    plugins: {
+      "eslint-comments": eslintComments,
+    },
+    // Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
+    rules: {
+      "eslint-comments/disable-enable-pair": [
+        "error",
+        { allowWholeFile: false },
+      ],
+
+      "eslint-comments/no-aggregating-enable": "error",
+
+      "eslint-comments/no-duplicate-disable": "error",
+
+      "eslint-comments/no-unlimited-disable": "error",
+
+      "eslint-comments/no-unused-disable": "error",
+
+      "eslint-comments/no-unused-enable": "error",
+
+      "eslint-comments/require-description": [
+        "error",
+        { ignore: ["eslint-enable"] },
+      ],
     },
   },
 ]);
