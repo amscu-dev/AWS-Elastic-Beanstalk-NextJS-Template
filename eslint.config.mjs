@@ -7,6 +7,7 @@ import eslintPluginJsonc from "eslint-plugin-jsonc";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
+import security from "eslint-plugin-security";
 // import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
@@ -200,6 +201,15 @@ const eslintConfig = defineConfig([
     ...testingLibrary.configs["flat/react"],
   },
   perfectionist.configs["recommended-line-length"],
+  {
+    rules: {
+      ...security.configs.recommended.rules,
+    },
+    plugins: {
+      security,
+    },
+    files: ["**/*.{js,jsx,ts,tsx}"],
+  },
 ]);
 
 export default eslintConfig;

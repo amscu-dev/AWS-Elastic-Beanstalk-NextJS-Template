@@ -14,8 +14,9 @@ type SupportedMethod = Lowercase<HttpMethods>;
 
 export function createServer(handlerConfigs: HandlerConfig[]) {
   const handlers = handlerConfigs.map((config) => {
-    const method = config.method ?? "get";
+    const method = (config.method ?? "get") as keyof typeof http;
 
+    // eslint-disable-next-line security/detect-object-injection -- no prod code
     return http[method](config.path, ({ request, params }) => {
       return HttpResponse.json(config.res({ request, params }), {
         status: config.status ?? 200,
