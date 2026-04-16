@@ -94,3 +94,28 @@ jobs:
           github-deployment-environment: ${{ inputs.github-env }}
           target: ${{ inputs.github-env == 'production' && 'production' || 'preview' }}
           vercel-output-dir: .vercel/output
+
+      - name: Notify on Slack
+        uses: slackapi/slack-github-action@v3.0.1
+        continue-on-error: true
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🚀 Deployment to Vercel environment *${{ inputs.github-env }}* was successful. <${{ steps.deploy-vercel.outputs.preview-url }}|View Deployment>"
+                  }
+                }
+              ]
+            }
+      - name: Abort if Cancelled
+        if: cancelled() && steps.deploy-vercel.conclusion == 'started'
+        run: |
+          curl -X PATCH "https://api.vercel.com/v12/deployments/${{ steps.deploy-vercel.outputs.deployment-id }}/cancel" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json"
