@@ -214,7 +214,6 @@ const eslintConfig = defineConfig([
   eslintPluginUnicorn.configs.recommended,
   {
     rules: {
-      "unicorn/filename-case": "off",
       "unicorn/no-null": "off",
     },
   },
