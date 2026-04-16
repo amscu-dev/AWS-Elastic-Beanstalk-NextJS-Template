@@ -4,12 +4,30 @@ import bundleAnalyzer from "@next/bundle-analyzer";
 
 // Security Headers
 
+const SENTRY_DOMAINS =
+  "https://*.ingest.de.sentry.io https://*.ingest.sentry.io https://*.sentry.io";
+
+const PRODUCTION_DOMAINS = [
+  "https://*.vercel.app",
+  "https://*.eu-central-1.elasticbeanstalk.com",
+  SENTRY_DOMAINS,
+].join(" ");
+
+const DEVELOPMENT_DOMAINS = [
+  "http://localhost:8000",
+  "http://localhost:8969",
+  SENTRY_DOMAINS,
+].join(" ");
+
+const isVercel = process.env.VERCEL === "1";
+const isProduction = process.env.NODE_ENV === "production";
+
 const cspHeader = `
   default-src 'self';
   connect-src 'self' ${
     process.env.NODE_ENV === "development"
-      ? "http://localhost:8000 http://localhost:8969"
-      : "< YOUR_PRODUCTION_DOMAIN >"
+      ? DEVELOPMENT_DOMAINS
+      : PRODUCTION_DOMAINS
   };
   script-src 'self' 'unsafe-eval' 'unsafe-inline';
   style-src 'self' 'unsafe-inline';
@@ -20,7 +38,7 @@ const cspHeader = `
   form-action 'self';
   frame-ancestors 'none';
   worker-src 'self' blob:;
-  ${process.env.NODE_ENV === "production" ? "upgrade-insecure-requests;" : ""}
+  ${isProduction && isVercel ? "upgrade-insecure-requests;" : ""}
 `;
 
 const secHeaders = {
@@ -81,6 +99,17 @@ const baseConfig: NextConfig = {
   async headers() {
     return [secHeaders];
   },
+  // experimental: {
+  //   turbopackSourceMaps: true,
+  //   turbopackInputSourceMaps: true,
+  // },
+  // webpack(config, { dev, isServer }) {
+  //   if (dev && !isServer) {
+  //     // Sentry nu poate rezolva eval-based source maps
+  //     config.devtool = "source-map";
+  //   }
+  //   return config;
+  // },
 };
 
 let nextConfig = baseConfig;
@@ -95,6 +124,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
     // https://www.npmjs.com/package/@sentry/webpack-plugin#options
     org: process.env.SENTRY_ORGANIZATION,
     project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
 
     // Only print logs for uploading source maps in CI
     silent: !process.env.CI,
@@ -109,7 +139,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
     // This can increase your server load as well as your hosting bill.
     // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
     // side errors will fail.
-    tunnelRoute: "/monitoring",
+    // tunnelRoute: "/monitoring",
 
     webpack: {
       reactComponentAnnotation: {
@@ -124,6 +154,10 @@ if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== "true") {
 
     // Disable Sentry telemetry
     telemetry: false,
+
+    sourcemaps: {
+      disable: false,
+    },
   });
 }
 
