@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import FeatureTest from "@/components/FeatureTest";
+import FeatureTest from "@/components/feature-test";
 import flagsmithInstance from "@/lib/flagsmith";
 
 jest.mock("@/lib/flagsmith", () => ({

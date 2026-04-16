@@ -13,11 +13,11 @@ export const withSuspense = <P extends object>(
   const { errorComponent: ErrorFallbackComponent, loadingComponent = null } =
     options;
 
-  const WithSuspenseComponent = (props: P) => {
+  const WithSuspenseComponent = (properties: P) => {
     return (
       <ErrorBoundary FallbackComponent={ErrorFallbackComponent}>
         <Suspense fallback={loadingComponent}>
-          <WrappedComponent {...props} />
+          <WrappedComponent {...properties} />
         </Suspense>
       </ErrorBoundary>
     );

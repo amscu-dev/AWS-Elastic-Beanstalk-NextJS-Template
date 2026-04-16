@@ -1,14 +1,14 @@
 "use client";
 import { ReactNode } from "react";
 
-import StoreContextProvider from "./ReduxStoreProvider";
-import ReactQueryProvider from "./ReactQueryProvider";
-import NuqsProvider from "./NuqsProvider";
+import StoreContextProvider from "./redux-store-provider";
+import ReactQueryProvider from "./react-query-provider";
+import NuqsProvider from "./nuqs-provider";
 
-interface Props {
+interface Properties {
   children: ReactNode;
 }
-export default function Providers({ children }: Props) {
+export default function Providers({ children }: Properties) {
   return (
     <>
       <ReactQueryProvider>

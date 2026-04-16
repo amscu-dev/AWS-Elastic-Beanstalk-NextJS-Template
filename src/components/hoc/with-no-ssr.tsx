@@ -11,12 +11,12 @@ export const withNoSSR = <P extends object>(
 ) => {
   const { fallback = null } = options ?? {};
 
-  const NoSSRComponent = (props: P) => {
+  const NoSSRComponent = (properties: P) => {
     const isClient = useIsClient();
 
     if (!isClient) return <>{fallback}</>;
 
-    return <WrappedComponent {...props} />;
+    return <WrappedComponent {...properties} />;
   };
 
   NoSSRComponent.displayName = `withNoSSR(${

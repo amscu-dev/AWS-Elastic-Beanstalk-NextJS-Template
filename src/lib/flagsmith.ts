@@ -1,9 +1,9 @@
 import { Flagsmith } from "flagsmith-nodejs";
 
-import { Env } from "./env";
+import { Environment } from "./environment";
 
 const flagsmithInstance = new Flagsmith({
-  environmentKey: Env.FLAGSMITH_KEY,
+  environmentKey: Environment.FLAGSMITH_KEY,
 });
 
 // export default flagsmithInstance;

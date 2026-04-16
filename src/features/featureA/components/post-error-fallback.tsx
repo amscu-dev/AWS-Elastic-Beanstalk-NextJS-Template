@@ -1,7 +1,7 @@
 "use client";
 import { FallbackProps } from "react-error-boundary";
 
-import { isAppError } from "@/utils/handleApiError";
+import { isAppError } from "@/utils/handle-api-error";
 
 export default function PostErrorFallback({
   resetErrorBoundary,

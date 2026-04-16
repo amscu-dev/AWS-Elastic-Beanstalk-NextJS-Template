@@ -1,14 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface ModalState {
-  modalType: "create" | "delete" | "edit" | null;
-  channelId: number | null;
+  modalType: undefined | "create" | "delete" | "edit";
+  channelId: undefined | number;
   isOpen: boolean;
 }
 
 const initialState: ModalState = {
-  modalType: null,
-  channelId: null,
+  modalType: undefined,
+  channelId: undefined,
   isOpen: false,
 };
 
@@ -25,7 +25,7 @@ export const modalStateSlice = createSlice({
     },
     onCloseChannelModal: (state) => {
       state.isOpen = false;
-      state.channelId = null;
+      state.channelId = undefined;
     },
   },
   name: "modal",

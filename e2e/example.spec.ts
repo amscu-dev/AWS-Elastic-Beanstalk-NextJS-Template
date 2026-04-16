@@ -37,10 +37,16 @@ test.describe("Home Page", () => {
   });
 
   test("5. Documentation link opens in a new tab", async ({ page }) => {
-    const docsLink = page.getByRole("link", { name: "Documentation" });
-    await expect(docsLink).toBeVisible();
-    await expect(docsLink).toHaveAttribute("href", /nextjs\.org\/docs/);
-    await expect(docsLink).toHaveAttribute("target", "_blank");
-    await expect(docsLink).toHaveAttribute("rel", "noopener noreferrer");
+    const documentationLink = page.getByRole("link", { name: "Documentation" });
+    await expect(documentationLink).toBeVisible();
+    await expect(documentationLink).toHaveAttribute(
+      "href",
+      /nextjs\.org\/docs/,
+    );
+    await expect(documentationLink).toHaveAttribute("target", "_blank");
+    await expect(documentationLink).toHaveAttribute(
+      "rel",
+      "noopener noreferrer",
+    );
   });
 });

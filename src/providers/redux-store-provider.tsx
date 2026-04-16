@@ -4,11 +4,11 @@ import { ReactNode } from "react";
 
 import { store } from "@/store/store";
 
-interface Props {
+interface Properties {
   children: ReactNode;
 }
 
-function StoreContextProvider({ children }: Props) {
+function StoreContextProvider({ children }: Properties) {
   return <Provider store={store}>{children}</Provider>;
 }
 

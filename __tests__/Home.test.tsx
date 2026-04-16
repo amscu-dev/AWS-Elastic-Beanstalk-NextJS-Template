@@ -3,12 +3,12 @@ import "@testing-library/jest-dom";
 
 import Home from "@/app/page";
 
-jest.mock("@/components/FeatureTest", () => ({
+jest.mock("@/components/feature-test", () => ({
   default: () => <div>This is a feature flag</div>,
   __esModule: true,
 }));
 
-jest.mock("@/components/ui/Loader", () => ({
+jest.mock("@/components/ui/loader", () => ({
   default: () => <div>Loading...</div>,
   __esModule: true,
 }));
@@ -70,8 +70,8 @@ describe("Home Page", () => {
       .filter((link) => link.getAttribute("target") === "_blank");
 
     expect(externalLinks.length).toBeGreaterThan(0);
-    externalLinks.forEach((link) => {
+    for (const link of externalLinks) {
       expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    });
+    }
   });
 });

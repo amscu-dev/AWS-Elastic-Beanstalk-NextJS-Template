@@ -1,11 +1,11 @@
 // app/posts/page.tsx
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 
-import getQueryClient from "@/lib/queryClient";
+import getQueryClient from "@/lib/query-client";
 
 import { postQueryKeys } from "../services/post.queryKeys";
 import { postsApi } from "../services/post.api";
-import Post from "./Post";
+import Post from "./post";
 
 export default async function PostWithHydratationBoundary() {
   const queryClient = getQueryClient();

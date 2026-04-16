@@ -1,6 +1,6 @@
 "use client";
 
-import { withNoSSR } from "@/components/hoc/withNoSsr";
+import { withNoSSR } from "@/components/hoc/with-no-ssr";
 
 import { useGetPostById } from "../services/post.hooks";
 // Solve#1 for issue :

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 import { useGetPostById } from "@/features/featureA/services/post.hooks";
-import Post from "@/features/featureA/components/Post";
+import Post from "@/features/featureA/components/post";
 
 jest.mock("@/features/featureA/services/post.hooks", () => ({
   useGetPostById: jest.fn(),

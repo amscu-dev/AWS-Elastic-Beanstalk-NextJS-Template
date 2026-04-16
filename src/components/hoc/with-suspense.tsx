@@ -10,10 +10,10 @@ export const withSuspense = <P extends object>(
 ) => {
   const { loadingComponent = null } = options ?? {};
 
-  const WithSuspenseComponent = (props: P) => {
+  const WithSuspenseComponent = (properties: P) => {
     return (
       <Suspense fallback={loadingComponent}>
-        <WrappedComponent {...props} />
+        <WrappedComponent {...properties} />
       </Suspense>
     );
   };

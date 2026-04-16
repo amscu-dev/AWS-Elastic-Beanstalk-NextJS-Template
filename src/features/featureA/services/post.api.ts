@@ -2,8 +2,8 @@ import z from "zod";
 
 import { customAxiosInstance } from "@/config/axios.config";
 import { apiResponseSchema } from "@/schemas/api.schemas";
+import { toAppError } from "@/utils/handle-api-error";
 import { OptionalConfig } from "@/types/axios.types";
-import { toAppError } from "@/utils/handleApiError";
 import { ApiResponse } from "@/types/api.types";
 
 import { CreatePostDto, UpdatePostDto, Post } from "../types/post.types";

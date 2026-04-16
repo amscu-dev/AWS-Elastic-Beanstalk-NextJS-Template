@@ -1,6 +1,6 @@
 import { postsApi } from "@/features/featureA/services/post.api";
 
-import { createServer } from "../mocks/createServer";
+import { createServer } from "../mocks/create-server";
 const BASE_URL = "http://localhost:3001";
 
 const mockMeta = {

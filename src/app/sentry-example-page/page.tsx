@@ -79,8 +79,8 @@ export default function Page() {
                 op: "test",
               },
               async () => {
-                const res = await fetch("/api/sentry-example-api");
-                if (!res.ok) {
+                const response = await fetch("/api/sentry-example-api");
+                if (!response.ok) {
                   setHasSentError(true);
                 }
               },
@@ -97,7 +97,10 @@ export default function Page() {
 
         {hasSentError ? (
           <p className="success">Error sent to Sentry.</p>
-        ) : !isConnected ? (
+        ) : // eslint-disable-next-line unicorn/no-nested-ternary -- no need for refactor
+        isConnected ? (
+          <div className="success_placeholder" />
+        ) : (
           <div className="connectivity-error">
             <p>
               It looks like network requests to Sentry are being blocked, which
@@ -105,8 +108,6 @@ export default function Page() {
               ad-blocker to complete the test.
             </p>
           </div>
-        ) : (
-          <div className="success_placeholder" />
         )}
 
         <div className="flex-spacer" />

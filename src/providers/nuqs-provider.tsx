@@ -1,10 +1,10 @@
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode } from "react";
 
-interface Props {
+interface Properties {
   children: ReactNode;
 }
 
-export default function NuqsProvider({ children }: Props) {
+export default function NuqsProvider({ children }: Properties) {
   return <NuqsAdapter>{children}</NuqsAdapter>;
 }

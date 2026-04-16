@@ -47,8 +47,7 @@ export const useGetAllPosts = <TData = Post[]>(
 // Called only once no matter how many components use useSuspenseQuery
 
 // Singleton on browser (reutilised between re-renders)
-let browserSelectPost: ((response: ApiResponse<Post>) => Post) | undefined =
-  undefined;
+let browserSelectPost: ((response: ApiResponse<Post>) => Post) | undefined;
 
 export function getSelectPost() {
   if (environmentManager.isServer()) {
@@ -101,16 +100,16 @@ export const useCreatePost = (
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
   const queryClient = useQueryClient();
-  const controllerRef = useRef<AbortController | null>(null);
+  const controllerReference = useRef<AbortController | null>(null);
 
   return useMutation<ApiResponse<Post>, AppError, CreatePostDto>({
     mutationFn: (body) => {
-      controllerRef.current?.abort();
-      controllerRef.current = new AbortController();
+      controllerReference.current?.abort();
+      controllerReference.current = new AbortController();
 
       return postsApi.create(body, {
         ...optionalAxiosConfig,
-        signal: controllerRef.current.signal,
+        signal: controllerReference.current.signal,
       });
     },
     onSuccess: () => {
@@ -133,7 +132,7 @@ export const usePatchPost = (
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
   const queryClient = useQueryClient();
-  const controllerRef = useRef<AbortController | null>(null);
+  const controllerReference = useRef<AbortController | null>(null);
 
   return useMutation<
     ApiResponse<Post>,
@@ -141,12 +140,12 @@ export const usePatchPost = (
     { body: UpdatePostDto; id: number }
   >({
     mutationFn: ({ body, id }) => {
-      controllerRef.current?.abort();
-      controllerRef.current = new AbortController();
+      controllerReference.current?.abort();
+      controllerReference.current = new AbortController();
 
       return postsApi.patch(id, body, {
         ...optionalAxiosConfig,
-        signal: controllerRef.current.signal,
+        signal: controllerReference.current.signal,
       });
     },
     onSuccess: (_, { id }) => {
@@ -166,16 +165,16 @@ export const useDeletePost = (
   optionalAxiosConfig?: Omit<OptionalConfig, "signal">,
 ) => {
   const queryClient = useQueryClient();
-  const controllerRef = useRef<AbortController | null>(null);
+  const controllerReference = useRef<AbortController | null>(null);
 
   return useMutation<void, AppError, number>({
     mutationFn: (id) => {
-      controllerRef.current?.abort();
-      controllerRef.current = new AbortController();
+      controllerReference.current?.abort();
+      controllerReference.current = new AbortController();
 
       return postsApi.delete(id, {
         ...optionalAxiosConfig,
-        signal: controllerRef.current.signal,
+        signal: controllerReference.current.signal,
       });
     },
     onSuccess: (_, id) => {

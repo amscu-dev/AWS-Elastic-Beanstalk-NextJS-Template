@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import AppVersion from "@/components/AppVersion";
+import AppVersion from "@/components/app-version";
 
 jest.mock("../package.json", () => ({
   version: "1.0.0",

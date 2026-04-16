@@ -31,7 +31,7 @@ jest.mock("@/features/featureA/services/post.api", () => ({
       data: { title: "Default Patched", completed: true, userId: 1, id: 1 },
       meta: { requestId: "default-patch" },
     }),
-    delete: jest.fn().mockResolvedValue(undefined),
+    delete: jest.fn().mockResolvedValue({}),
   },
 }));
 
@@ -231,7 +231,7 @@ describe("post hooks", () => {
   test("useDeletePost", async () => {
     const mockedPostsApi = postsApi as jest.Mocked<typeof postsApi>;
 
-    mockedPostsApi.delete.mockResolvedValueOnce(undefined);
+    mockedPostsApi.delete.mockResolvedValueOnce();
 
     const { result } = renderHook(() => useDeletePost(), {
       wrapper: createWrapper(),

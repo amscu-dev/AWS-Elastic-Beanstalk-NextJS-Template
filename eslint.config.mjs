@@ -3,6 +3,7 @@ import { globalIgnores, defineConfig } from "eslint/config";
 import eslintComments from "eslint-plugin-eslint-comments";
 import testingLibrary from "eslint-plugin-testing-library";
 import perfectionist from "eslint-plugin-perfectionist";
+import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import eslintPluginJsonc from "eslint-plugin-jsonc";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
@@ -209,6 +210,13 @@ const eslintConfig = defineConfig([
       security,
     },
     files: ["**/*.{js,jsx,ts,tsx}"],
+  },
+  eslintPluginUnicorn.configs.recommended,
+  {
+    rules: {
+      "unicorn/filename-case": "off",
+      "unicorn/no-null": "off",
+    },
   },
 ]);
 

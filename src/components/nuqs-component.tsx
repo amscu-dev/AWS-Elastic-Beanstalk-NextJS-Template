@@ -7,7 +7,10 @@ export default function NuqsComponent() {
   return (
     <>
       <h1>Hello, {name || "anonymous visitor"}!</h1>
-      <input onChange={(e) => setName(e.target.value)} value={name || ""} />
+      <input
+        onChange={(event) => setName(event.target.value)}
+        value={name || ""}
+      />
       <button onClick={() => setName(null)}>Clear</button>
     </>
   );

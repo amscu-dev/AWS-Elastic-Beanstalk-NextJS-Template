@@ -5,7 +5,7 @@ import { OptionalConfig, RequiredConfig } from "@/types/axios.types";
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: "http://localhost:3001",
   // withCredentials: true,
-  timeout: 10000,
+  timeout: 10_000,
 });
 
 axiosInstance.interceptors.response.use(
@@ -13,7 +13,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    return Promise.reject(error);
+    throw error;
   },
 );
 

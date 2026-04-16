@@ -70,7 +70,7 @@ const secHeaders = {
       key: "Strict-Transport-Security",
     },
     {
-      value: cspHeader.replace(/\n/g, ""),
+      value: cspHeader.replaceAll("\n", ""),
       key: "Content-Security-Policy",
     },
     {

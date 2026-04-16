@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import Image from "next/image";
 
-import FeatureTest from "@/components/FeatureTest";
-import AppVersion from "@/components/AppVersion";
-import Loader from "@/components/ui/Loader";
+import FeatureTest from "@/components/feature-test";
+import AppVersion from "@/components/app-version";
+import Loader from "@/components/ui/loader";
 
 export const revalidate = 0;
 

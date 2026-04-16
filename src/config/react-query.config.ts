@@ -4,12 +4,12 @@ import {
   QueryCache,
 } from "@tanstack/react-query";
 
-import { isAppError } from "@/utils/handleApiError";
+import { isAppError } from "@/utils/handle-api-error";
 
 // Jitter Strategy
 // Docs: https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
 const decorrelatedRetryDelay = (attemptIndex: number) => {
-  const base = Math.min(1000 * 2 ** attemptIndex, 30000);
+  const base = Math.min(1000 * 2 ** attemptIndex, 30_000);
   return Math.random() * base;
 };
 
@@ -67,8 +67,9 @@ const queryClientConfig: QueryClientConfig = {
       }
 
       if (error.kind === "axios") {
-        const msg = error.error.response?.data.message || error.error.message;
-        console.error(msg);
+        const message =
+          error.error.response?.data.message || error.error.message;
+        console.error(message);
       } else if (error.kind === "validation") {
         console.error(`Validation error: ${error.error.message}`);
       } else {
@@ -85,8 +86,9 @@ const queryClientConfig: QueryClientConfig = {
       }
 
       if (error.kind === "axios") {
-        const msg = error.error.response?.data.message || error.error.message;
-        console.error(msg);
+        const message =
+          error.error.response?.data.message || error.error.message;
+        console.error(message);
       } else if (error.kind === "validation") {
         console.error(`Validation error: ${error.error.message}`);
       } else {
