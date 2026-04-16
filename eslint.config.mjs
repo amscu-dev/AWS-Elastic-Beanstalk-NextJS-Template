@@ -5,6 +5,7 @@ import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
 import eslintPluginJsonc from "eslint-plugin-jsonc";
 import eslintComments from "eslint-plugin-eslint-comments";
+import testingLibrary from "eslint-plugin-testing-library";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -191,6 +192,10 @@ const eslintConfig = defineConfig([
         { ignore: ["eslint-enable"] },
       ],
     },
+  },
+  {
+    files: ["**/__tests__/**/*.{jsx,tsx}"],
+    ...testingLibrary.configs["flat/react"],
   },
 ]);
 

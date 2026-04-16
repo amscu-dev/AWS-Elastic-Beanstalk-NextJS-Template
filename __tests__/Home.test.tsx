@@ -12,19 +12,23 @@ jest.mock("@/components/ui/Loader", () => ({
   default: () => <div>Loading...</div>,
 }));
 
+const setup = () => {
+  jest.clearAllMocks();
+  render(<Home />);
+};
+
 describe("Home Page", () => {
-  beforeEach(async () => {
-    jest.clearAllMocks();
-    render(Home());
-  });
+  beforeEach(() => {});
 
   test("1. renders the Next.js logo with correct alt text", () => {
+    setup();
     const logo = screen.getByAltText("Next.js logo");
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute("src", "/next.svg");
   });
 
   test("2. renders the correct heading", () => {
+    setup();
     const heading = screen.getByRole("heading", {
       name: "To get started, edit the page.tsx file.",
     });
@@ -32,6 +36,7 @@ describe("Home Page", () => {
   });
 
   test("3. renders the Templates and Learning links with correct hrefs", () => {
+    setup();
     const templatesLink = screen.getByRole("link", { name: "Templates" });
     const learningLink = screen.getByRole("link", { name: "Learning" });
 
@@ -46,6 +51,7 @@ describe("Home Page", () => {
   });
 
   test("4. renders the Deploy Now link with correct href and Vercel logo", () => {
+    setup();
     const deployLink = screen.getByRole("link", { name: /Deploy Now/i });
     const vercelLogo = screen.getByAltText("Vercel logomark");
 
@@ -57,6 +63,7 @@ describe("Home Page", () => {
   });
 
   test("5. renders external links with target _blank and noopener noreferrer", () => {
+    setup();
     const externalLinks = screen
       .getAllByRole("link")
       .filter((link) => link.getAttribute("target") === "_blank");
