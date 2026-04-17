@@ -43,7 +43,8 @@
     "zizmor:online": "bash ./scripts/zizmor.sh online",
     "zizmor:offline": "bash ./scripts/zizmor.sh offline",
     "zizmor:staged": "bash ./scripts/zizmor.sh staged",
-    "ggshield": "bash ./scripts/ggshield.sh"
+    "ggshield": "bash ./scripts/ggshield.sh",
+    "eslint:config": "eslint --inspect-config"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
