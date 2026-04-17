@@ -30,7 +30,7 @@ export default function Page() {
         <title>sentry-example-page</title>
         <meta content="Test Sentry for your Next.js app!" name="description" />
       </Head>
-
+      {/* eslint-disable better-tailwindcss/no-unknown-classes -- sentry example page uses custom CSS classes, not Tailwind */}
       <main>
         <div className="flex-spacer" />
         <svg
@@ -67,7 +67,6 @@ export default function Page() {
           </a>
           .
         </p>
-
         <button
           onClick={async () => {
             Sentry.logger.info(
@@ -94,7 +93,6 @@ export default function Page() {
         >
           <span>Throw Sample Error</span>
         </button>
-
         {hasSentError ? (
           <p className="success">Error sent to Sentry.</p>
         ) : // eslint-disable-next-line unicorn/no-nested-ternary -- no need for refactor
@@ -112,7 +110,7 @@ export default function Page() {
 
         <div className="flex-spacer" />
       </main>
-
+      {/* eslint-enable better-tailwindcss/no-unknown-classes */}
       <style>{`
         main {
           display: flex;

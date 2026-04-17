@@ -1,30 +1,37 @@
-import { configs as perfectionistConfigs } from "eslint-plugin-perfectionist";
-import { configs as jsoncConfigs } from "eslint-plugin-jsonc";
+import { configs as perfectionist } from "eslint-plugin-perfectionist";
+import tailwindcssPlugin from "eslint-plugin-better-tailwindcss";
+import reactCompilerPlugin from "eslint-plugin-react-compiler";
 import nextVitals from "eslint-config-next/core-web-vitals";
-import { globalIgnores, defineConfig } from "eslint/config";
 import eslintComments from "eslint-plugin-eslint-comments";
 import testingLibrary from "eslint-plugin-testing-library";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
+import { configs as jsonc } from "eslint-plugin-jsonc";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import boundaries from "eslint-plugin-boundaries";
 import importPlugin from "eslint-plugin-import";
+import * as mdxPlugin from "eslint-plugin-mdx";
 import security from "eslint-plugin-security";
+import { defineConfig } from "eslint/config";
 import sonarjs from "eslint-plugin-sonarjs";
+// Global ignores configuration
+// Must be in its own config object to act as global ignores
+const ignoresConfig = defineConfig([
+  {
+    ignores: [
+      ".next/",
+      "node_modules/",
+      "public/",
+      ".vscode/",
+      "next-env.d.ts",
+    ],
+    name: "project/ignores",
+  },
+]);
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Docs: https://www.npmjs.com/package/eslint-config-prettier
-  prettier,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+const baseConfig = defineConfig([...nextVitals, ...nextTs]);
+
+const jsBoundariesConfig = defineConfig([
   // Docs: https://www.jsboundaries.dev/
   {
     rules: {
@@ -141,6 +148,9 @@ const eslintConfig = defineConfig([
     },
     plugins: { boundaries },
   },
+]);
+
+const reduxHooksLintConfig = defineConfig([
   {
     rules: {
       "@typescript-eslint/no-restricted-imports": [
@@ -166,15 +176,21 @@ const eslintConfig = defineConfig([
     },
     files: ["src/store/hooks.ts"],
   },
-  // Docs: https://ota-meshi.github.io/eslint-plugin-jsonc/
-  ...jsoncConfigs["recommended-with-json"],
+]);
+
+// Docs: https://ota-meshi.github.io/eslint-plugin-jsonc
+const jsonConfig = defineConfig([
+  ...jsonc["recommended-with-json"],
   {
     files: [".vscode/**/*.json", ".devcontainer/**/*.json"],
     rules: {
       "jsonc/no-comments": "off",
     },
   },
-  // Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
+]);
+
+// Docs: https://mysticatea.github.io/eslint-plugin-eslint-comments/rules/
+const eslintCommentsConfig = defineConfig([
   {
     rules: {
       "eslint-comments/require-description": [
@@ -201,14 +217,23 @@ const eslintConfig = defineConfig([
       "eslint-comments": eslintComments,
     },
   },
-  // Docs: https://www.npmjs.com/package/eslint-plugin-testing-library
+]);
+
+// Docs: https://www.npmjs.com/package/eslint-plugin-testing-library
+const testConfigs = defineConfig([
   {
     files: ["**/__tests__/**/*.{jsx,tsx}"],
     ...testingLibrary.configs["flat/react"],
   },
-  // Docs: https://perfectionist.dev/
-  perfectionistConfigs["recommended-line-length"],
-  // Docs: https://www.npmjs.com/package/eslint-plugin-security
+]);
+
+// Docs: https://perfectionist.dev/
+const perfectionistConfigs = defineConfig([
+  perfectionist["recommended-line-length"],
+]);
+
+// Docs: https://www.npmjs.com/package/eslint-plugin-security
+const securityConfig = defineConfig([
   {
     rules: {
       ...security.configs.recommended.rules,
@@ -218,14 +243,26 @@ const eslintConfig = defineConfig([
     },
     files: ["**/*.{js,jsx,ts,tsx}"],
   },
-  // Docs: https://www.npmjs.com/package/eslint-plugin-unicorn
+]);
+
+// Docs: https://www.npmjs.com/package/eslint-plugin-unicorn
+const unicornConfig = defineConfig([
   eslintPluginUnicorn.configs.recommended,
   {
     rules: {
       "unicorn/no-null": "off",
     },
   },
-  // Docs: https://www.npmjs.com/package/eslint-plugin-sonarjs?activeTab=versions
+  {
+    rules: {
+      "unicorn/filename-case": "off",
+    },
+    files: ["**/*.md"],
+  },
+]);
+
+// Docs: https://www.npmjs.com/package/eslint-plugin-sonarjs?activeTab=versions
+const sonarjsConfig = defineConfig([
   sonarjs.configs.recommended,
   {
     rules: {
@@ -234,7 +271,10 @@ const eslintConfig = defineConfig([
       "sonarjs/todo-tag": "off",
     },
   },
-  // Docs: https://www.npmjs.com/package/eslint-plugin-import?activeTab=readme
+]);
+
+// Docs: https://www.npmjs.com/package/eslint-plugin-import?activeTab=readme
+const importConfig = defineConfig([
   {
     rules: {
       // Helpful warnings
@@ -282,4 +322,110 @@ const eslintConfig = defineConfig([
   },
 ]);
 
+// Docs: https://www.npmjs.com/package/eslint-config-prettier
+const prettierConfig = defineConfig([prettier]);
+
+// MDX configuration Docs: https://www.npmjs.com/package/eslint-plugin-mdx
+const mdxConfig = defineConfig([
+  {
+    name: "project/mdx-files",
+    files: ["**/*.mdx"],
+    ...mdxPlugin.flat,
+    processor: mdxPlugin.createRemarkProcessor({
+      // Disable linting code blocks for better performance
+      lintCodeBlocks: false,
+      languageMapper: {},
+    }),
+  },
+  {
+    name: "project/mdx-code-blocks",
+    files: ["**/*.mdx"],
+    ...mdxPlugin.flatCodeBlocks,
+    rules: {
+      ...mdxPlugin.flatCodeBlocks.rules,
+      "prefer-const": "error",
+      "no-var": "error",
+    },
+  },
+  {
+    rules: {
+      // MDX often has unescaped entities in text content
+      "react/no-unescaped-entities": "off",
+    },
+    name: "project/mdx-react-overrides",
+    files: ["**/*.mdx"],
+  },
+]);
+
+// React Compiler configuration (experimental)
+const reactCompilerConfig = defineConfig([
+  {
+    rules: {
+      "react-compiler/react-compiler": "error",
+    },
+    plugins: {
+      "react-compiler": reactCompilerPlugin,
+    },
+    name: "project/react-compiler",
+    files: ["**/*.{jsx,tsx}"],
+  },
+]);
+
+// Tailwind CSS configuration
+const tailwindcssConfig = defineConfig({
+  rules: {
+    // all rules (recommended = stylistic + correctness)
+    ...tailwindcssPlugin.configs.recommended.rules,
+    // stylistic rules only
+    //...tailwindcssPlugin.configs.stylistic.rules,
+    // correctness rules only
+    //...tailwindcssPlugin.configs.correctness.rules,
+    // single customizations
+    // https://github.com/schoero/eslint-plugin-better-tailwindcss/blob/main/README.md#rules
+    // https://github.com/schoero/eslint-plugin-better-tailwindcss/blob/main/docs/rules/enforce-consistent-line-wrapping.md
+    "better-tailwindcss/enforce-consistent-line-wrapping": [
+      "warn",
+      {
+        lineBreakStyle: "unix", // Line breaks: 'windows' (\r\n) | 'unix' (\n)
+        preferSingleLine: true, // Keep variants on single line until limits exceeded
+        classesPerLine: 0, // Maximum classes per line (0 = disabled)
+        group: "newLine", // Group separation: 'emptyLine' | 'never' | 'newLine'
+        printWidth: 80, // Maximum line length (0 = disabled)
+        indent: 2, // Indentation: number of spaces or 'tab'
+      },
+    ],
+  },
+  settings: {
+    "better-tailwindcss": {
+      // tailwindcss (4) css based
+      entryPoint: "src/styles/globals.css",
+      // for tailwindcss (3) with a config
+      //"tailwindConfig": "tailwind.config.js"
+    },
+  },
+  plugins: {
+    "better-tailwindcss": tailwindcssPlugin,
+  },
+  name: "custom/tailwindcss/recommended",
+  files: ["**/*.ts?(x)"],
+});
+
+const eslintConfig = defineConfig([
+  ...ignoresConfig,
+  ...baseConfig,
+  ...prettierConfig,
+  ...jsBoundariesConfig,
+  ...reduxHooksLintConfig,
+  ...jsonConfig,
+  ...eslintCommentsConfig,
+  ...testConfigs,
+  ...perfectionistConfigs,
+  ...securityConfig,
+  ...unicornConfig,
+  ...sonarjsConfig,
+  ...importConfig,
+  ...mdxConfig,
+  ...reactCompilerConfig,
+  ...tailwindcssConfig,
+]);
 export default eslintConfig;
