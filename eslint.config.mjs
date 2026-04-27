@@ -481,6 +481,7 @@ const importConfig = defineConfig([
       "import/no-named-as-default-member": "warn",
       "import/newline-after-import": "error",
       "import/no-mutable-exports": "error",
+
       "import/no-named-as-default": "warn",
       "import/no-absolute-path": "error",
       "import/no-self-import": "error",
