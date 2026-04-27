@@ -96,7 +96,7 @@ jobs:
           vercel-output-dir: .vercel/output
 
       - name: Notify on Slack
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.2
         continue-on-error: true
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

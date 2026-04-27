@@ -98,7 +98,7 @@ jobs:
           path: playwright-report/
 
       - name: Send a Slack Message on Failure
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.2
         if: failure()
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
