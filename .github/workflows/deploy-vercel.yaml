@@ -81,7 +81,7 @@ jobs:
           NEXT_PUBLIC_SENTRY_DISABLED: true
 
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v42.2.0
+        uses: amondnet/vercel-action@v42.3.0
         id: deploy-vercel
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -96,7 +96,7 @@ jobs:
           vercel-output-dir: .vercel/output
 
       - name: Notify on Slack
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.3
         continue-on-error: true
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

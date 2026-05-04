@@ -171,7 +171,7 @@ jobs:
             --output text)" >> "$GITHUB_OUTPUT"
 
       - name: Notify on Slack
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.3
         continue-on-error: true
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
