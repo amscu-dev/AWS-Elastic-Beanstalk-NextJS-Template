@@ -47,7 +47,7 @@ jobs:
 
       - name: Send a Slack Message for Version PR Updates
         if: steps.changesets.outputs.pullRequestNumber
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.3
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -71,7 +71,7 @@ jobs:
 
       - name: Send a Slack Message when a New Release is Created
         if: steps.changesets.outputs.published == 'true'
-        uses: slackapi/slack-github-action@v3.0.1
+        uses: slackapi/slack-github-action@v3.0.3
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
